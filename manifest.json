@@ -1,0 +1,19 @@
+{
+  "name": "行前必办",
+  "short_name": "行前必办",
+  "description": "旅行预约倒计时 —— 规划期就把抢票时间轴对齐，别到了才发现票早放完了",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0EA5E9",
+  "background_color": "#F4F7FA",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' style='stop-color:%230284C7'/><stop offset='100%25' style='stop-color:%2338BDF8'/></linearGradient></defs><rect width='512' height='512' rx='112' fill='url(%23g)'/><rect x='108' y='132' width='296' height='268' rx='34' fill='none' stroke='white' stroke-width='26'/><line x1='108' y1='208' x2='404' y2='208' stroke='white' stroke-width='26'/><line x1='186' y1='104' x2='186' y2='160' stroke='white' stroke-width='26' stroke-linecap='round'/><line x1='326' y1='104' x2='326' y2='160' stroke='white' stroke-width='26' stroke-linecap='round'/><circle cx='256' cy='308' r='16' fill='white'/><line x1='256' y1='250' x2='256' y2='284' stroke='white' stroke-width='26' stroke-linecap='round'/></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

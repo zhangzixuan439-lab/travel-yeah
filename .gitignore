@@ -1,0 +1,17 @@
+# 生成物 / 本地产物
+travel.db
+*.ics
+data.js.bak
+
+# Python
+__pycache__/
+*.py[cod]
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# API Key —— 绝对不能提交
+.env.local
+.env
+*.key

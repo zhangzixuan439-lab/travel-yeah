@@ -1,0 +1,1965 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="行前必办" />
+<meta name="theme-color" content="#0EA5E9" />
+<link rel="manifest" href="./manifest.json" />
+<title>行前必办</title>
+<style>
+:root{
+  --c-primary:#0EA5E9; --c-primary-dark:#0284C7; --c-primary-light:#E0F2FE;
+  --c-bg:#F4F7FA; --c-card:#FFFFFF;
+  --c-text:#0F172A; --c-text-2:#64748B; --c-text-3:#94A3B8;
+  --c-sep:#EEF2F6;
+  --st-action:#F59E0B; --st-missed:#EF4444; --st-released:#FB923C;
+  --st-open:#10B981; --st-wait:#0EA5E9; --st-none:#94A3B8; --st-free:#34D399;
+  --r-card:16px; --r-sm:10px; --r-xs:8px;
+  --sh-card:0 2px 12px rgba(15,23,42,.06);
+  --sh-modal:0 -4px 24px rgba(15,23,42,.14);
+  --font-mono:'SF Mono','Menlo','Consolas','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue","PingFang SC","Noto Sans CJK SC",sans-serif;
+  background:var(--c-bg);color:var(--c-text);-webkit-font-smoothing:antialiased;
+  -webkit-text-size-adjust:100%}
+#app{display:flex;flex-direction:column;height:100%;max-width:520px;margin:0 auto;
+  background:var(--c-bg);position:relative}
+
+/* ---------- header ---------- */
+.hd{background:linear-gradient(135deg,#0284C7 0%,#0EA5E9 60%,#38BDF8 100%);
+  color:#fff;padding:calc(14px + env(safe-area-inset-top,0)) 18px 16px;flex-shrink:0}
+.hd h1{font-size:19px;font-weight:600;letter-spacing:.3px}
+.hd p{font-size:12px;opacity:.9;margin-top:3px;line-height:1.5}
+
+/* ---------- scroll body ---------- */
+.body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 24px}
+.view{display:none}.view.on{display:block}
+
+/* ---------- card ---------- */
+.card{background:var(--c-card);border-radius:var(--r-card);box-shadow:var(--sh-card);
+  padding:14px;margin-bottom:12px}
+.card-t{font-size:13px;font-weight:600;color:var(--c-text-2);margin-bottom:10px;
+  display:flex;align-items:center;justify-content:space-between}
+.lbl{font-size:11px;color:var(--c-text-3);margin-bottom:6px;display:block}
+
+/* ---------- inputs ---------- */
+input,select,textarea{font-family:inherit;font-size:15px;color:var(--c-text);
+  background:#F8FAFC;border:1px solid var(--c-sep);border-radius:var(--r-sm);
+  padding:10px 12px;width:100%;-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--c-primary);background:#fff}
+input[type=date],input[type=time]{min-height:44px}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 10px center;background-size:16px;padding-right:34px}
+
+/* ---------- chips ---------- */
+.chips{display:flex;gap:7px;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  padding-bottom:2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:7px 13px;border-radius:999px;background:#F1F5F9;
+  color:var(--c-text-2);font-size:13px;border:1px solid transparent;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;transition:all .12s}
+.chip.on{background:var(--c-primary);color:#fff;border-color:var(--c-primary);font-weight:500}
+.chip:active{opacity:.65}
+.quick{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.quick .chip{font-size:12px;padding:6px 11px}
+
+/* ---------- buttons ---------- */
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;
+  padding:13px;border:none;border-radius:var(--r-sm);font-size:15px;font-weight:600;
+  background:var(--c-primary);color:#fff;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;font-family:inherit}
+.btn:active{opacity:.8}
+.btn.ghost{background:#F1F5F9;color:var(--c-text-2)}
+.btn.sm{padding:9px;font-size:13px}
+.btn svg{width:17px;height:17px}
+.btn-row{display:flex;gap:8px}
+
+/* ---------- summary strip ---------- */
+.sum{display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;scrollbar-width:none}
+.sum::-webkit-scrollbar{display:none}
+.sum-i{flex-shrink:0;background:var(--c-card);border-radius:var(--r-sm);
+  box-shadow:var(--sh-card);padding:9px 13px;min-width:74px;text-align:center}
+.sum-n{font-size:20px;font-weight:700;font-family:var(--font-mono);line-height:1.1}
+.sum-l{font-size:10px;color:var(--c-text-3);margin-top:3px;white-space:nowrap}
+
+/* ---------- group heading ---------- */
+.grp{display:flex;align-items:center;gap:7px;margin:16px 2px 9px;font-size:13px;font-weight:600}
+.grp .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.grp .n{color:var(--c-text-3);font-weight:400;font-size:12px}
+
+/* ---------- poi row ---------- */
+.poi{background:var(--c-card);border-radius:var(--r-card);box-shadow:var(--sh-card);
+  padding:13px 14px;margin-bottom:9px;border-left:3px solid var(--c-text-3);
+  cursor:pointer;-webkit-tap-highlight-color:transparent}
+.poi:active{opacity:.7}
+.poi-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.poi-n{font-size:15px;font-weight:600;line-height:1.35}
+.poi-c{font-size:11px;color:var(--c-text-3);flex-shrink:0}
+.poi-m{font-size:12.5px;color:var(--c-text-2);line-height:1.6;margin-top:6px}
+.poi-m b{color:var(--c-text);font-weight:600}
+.poi-alt{font-size:12px;color:var(--st-open);background:#ECFDF5;border-radius:var(--r-xs);
+  padding:7px 9px;margin-top:8px;line-height:1.5}
+.poi-warn{font-size:11px;color:#B45309;background:#FEF3C7;border-radius:var(--r-xs);
+  padding:6px 9px;margin-top:7px;line-height:1.45}
+.stars{font-size:11px;color:var(--st-action);letter-spacing:1px;font-family:var(--font-mono)}
+.badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:999px;
+  background:#F1F5F9;color:var(--c-text-2);margin-left:5px;vertical-align:middle}
+
+/* ---------- library rows ---------- */
+.lib{background:var(--c-card);border-radius:var(--r-sm);box-shadow:var(--sh-card);
+  padding:11px 13px;margin-bottom:7px;display:flex;align-items:center;gap:10px;
+  cursor:pointer;-webkit-tap-highlight-color:transparent}
+.lib:active{opacity:.7}
+.lib-b{flex:1;min-width:0}
+.lib-n{font-size:14px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lib-s{font-size:11px;color:var(--c-text-3);margin-top:2px}
+.lib-r{flex-shrink:0;text-align:right}
+.tick{width:18px;height:18px;flex-shrink:0}
+
+/* ---------- modal ---------- */
+.ov{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:500;display:none;
+  align-items:flex-end;justify-content:center}
+.ov.on{display:flex}
+.sheet{width:100%;max-width:520px;background:var(--c-card);border-radius:20px 20px 0 0;
+  padding:8px 18px calc(18px + env(safe-area-inset-bottom,0));box-shadow:var(--sh-modal);
+  animation:up .28s ease-out;max-height:88vh;overflow-y:auto}
+@keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.handle{width:36px;height:4px;border-radius:2px;background:#DDE3EA;margin:0 auto 14px}
+.sheet h3{font-size:17px;font-weight:600;margin-bottom:4px}
+.sheet .sub{font-size:12px;color:var(--c-text-3);margin-bottom:16px}
+.fld{margin-bottom:13px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sw{display:flex;align-items:center;justify-content:space-between;padding:11px 0;
+  border-top:1px solid var(--c-sep)}
+.sw-l{font-size:14px}.sw-d{font-size:11px;color:var(--c-text-3);margin-top:2px}
+.tg{width:46px;height:28px;border-radius:999px;background:#E2E8F0;position:relative;
+  flex-shrink:0;cursor:pointer;transition:background .18s}
+.tg.on{background:var(--st-open)}
+.tg::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;
+  border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .18s}
+.tg.on::after{transform:translateX(18px)}
+textarea{min-height:70px;resize:vertical;line-height:1.5;font-size:14px}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;align-items:center;justify-content:space-around;
+  background:rgba(255,255,255,.94);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-top:.5px solid rgba(15,23,42,.08);padding:6px 0 4px;
+  padding-bottom:calc(4px + env(safe-area-inset-bottom,0));flex-shrink:0;z-index:100}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0;
+  min-width:60px;cursor:pointer;color:var(--c-text-3);position:relative;
+  -webkit-tap-highlight-color:transparent;transition:color .15s}
+.tab.on{color:var(--c-primary)}
+.tab:active{opacity:.6}
+.tab svg{width:23px;height:23px}
+.tab span{font-size:10px;font-weight:500}
+.tab .cnt{position:absolute;top:-1px;right:6px;background:var(--st-missed);color:#fff;
+  font-size:9px;font-weight:600;min-width:15px;height:15px;border-radius:999px;
+  display:flex;align-items:center;justify-content:center;padding:0 3px}
+
+/* ---------- 出发地/目的地选择 ---------- */
+.pick{display:flex;align-items:flex-end;gap:9px}
+.pick-c{flex:1;min-width:0}
+.pick-a{flex:0 0 auto;color:var(--c-text-3);font-size:17px;padding-bottom:11px}
+
+/* ---------- 攻略分区 ---------- */
+.sec{margin:18px 0 10px;display:flex;align-items:center;gap:8px}
+.sec-n{font-size:15px;font-weight:600}
+.sec-c{font-size:12px;color:var(--c-text-3);font-weight:400}
+.sec-more{margin-left:auto;font-size:12px;color:var(--c-primary);cursor:pointer;
+  -webkit-tap-highlight-color:transparent}
+.hero{background:linear-gradient(135deg,#0284C7 0%,#0EA5E9 100%);color:#fff;
+  border-radius:var(--r-card);padding:16px;margin-bottom:4px}
+.hero h2{font-size:20px;font-weight:600}
+.hero .sub{font-size:12.5px;opacity:.92;margin-top:5px;line-height:1.55}
+.hero .kv{display:flex;gap:14px;margin-top:11px;flex-wrap:wrap}
+.hero .kv div{font-size:11.5px;opacity:.95}
+.hero .kv b{display:block;font-size:15px;font-weight:600;margin-top:1px}
+.hero .bad{background:rgba(0,0,0,.18);border-radius:8px;padding:7px 10px;
+  margin-top:11px;font-size:11.5px;line-height:1.5}
+.caliber{font-size:11px;color:var(--c-text-3);line-height:1.55;margin:6px 2px 0}
+.dest-row{background:var(--c-card);border-radius:var(--r-card);box-shadow:var(--sh-card);
+  padding:13px 14px;margin-bottom:9px;cursor:pointer;border-left:3px solid var(--st-wait);
+  -webkit-tap-highlight-color:transparent}
+.dest-row:active{opacity:.7}
+.dest-row.off{border-left-color:var(--st-missed);opacity:.72}
+.dr-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.dr-n{font-size:15px;font-weight:600}
+.dr-t{font-size:13px;font-weight:600;color:var(--c-primary-dark);
+  font-family:var(--font-mono);flex-shrink:0}
+.dr-m{font-size:12px;color:var(--c-text-2);margin-top:5px;line-height:1.55}
+.way{background:var(--c-card);border-radius:var(--r-sm);box-shadow:var(--sh-card);
+  padding:12px 13px;margin-bottom:8px;border-left:3px solid var(--st-wait);
+  cursor:pointer;-webkit-tap-highlight-color:transparent}
+.way:active{opacity:.7}
+.way.best{border-left-color:var(--st-open)}
+.way-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.way-n{font-size:14px;font-weight:600}
+.way-p{font-size:12.5px;color:var(--c-text-2);flex-shrink:0}
+.way-t{font-size:13px;margin-top:5px}
+.way-t b{font-family:var(--font-mono);font-size:15px;color:var(--c-primary-dark)}
+.way-s{font-size:11.5px;color:var(--c-text-3);margin-top:4px;line-height:1.5}
+.arr{background:#F0F9FF;border:1px solid #BAE6FD;border-radius:var(--r-sm);
+  padding:10px 12px;margin-bottom:7px}
+.arr-h{font-size:13px;font-weight:600;color:#075985}
+.arr-m{font-size:12px;color:var(--c-text-2);margin-top:4px;line-height:1.55}
+.arr-m b{color:var(--c-text)}
+
+.pk{width:22px;height:22px;border-radius:50%;border:2px solid #CBD5E1;
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+  color:#fff;flex-shrink:0;cursor:pointer;transition:all .13s;font-weight:700;
+  -webkit-tap-highlight-color:transparent}
+.pk.on{background:var(--st-open);border-color:var(--st-open)}
+.pk:active{transform:scale(.88)}
+.poi-h{gap:9px}
+
+/* ---------- misc ---------- */
+.empty{text-align:center;padding:44px 20px;color:var(--c-text-3);font-size:13px;line-height:1.7}
+.note{font-size:11.5px;color:var(--c-text-2);background:var(--c-primary-light);
+  border-left:3px solid var(--c-primary);border-radius:var(--r-xs);padding:9px 11px;
+  line-height:1.6;margin-bottom:12px}
+.toast{position:fixed;left:50%;bottom:78px;transform:translateX(-50%);
+  background:rgba(15,23,42,.92);color:#fff;font-size:13px;padding:10px 18px;
+  border-radius:999px;z-index:900;opacity:0;transition:opacity .22s;pointer-events:none;
+  max-width:86%;text-align:center;line-height:1.5}
+.toast.on{opacity:1}
+a{color:var(--c-primary)}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="hd">
+    <h1 id="hdT">行前必办</h1>
+    <p id="hdS">规划期就把抢票时间轴对齐 —— 别到了才发现票早放完了</p>
+    <div id="hdDemo" style="display:none;margin-top:9px;background:rgba(255,255,255,.18);
+      border-radius:8px;padding:6px 9px;font-size:11px;line-height:1.5"></div>
+  </div>
+
+  <div class="body" id="body">
+
+    <!-- ============ 倒计时 ============ -->
+    <div class="view on" id="v-cd">
+      <div class="card">
+        <span class="lbl">游览日期</span>
+        <input type="date" id="dt" />
+        <div class="quick" id="quick"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-t">看哪儿 <span id="hitN" style="font-weight:400;color:var(--c-text-3)"></span></div>
+        <div class="chips" id="cityChips"></div>
+        <input type="search" id="q" placeholder="或搜景区名，如 故宫 / 熊猫" style="margin-top:10px" />
+      </div>
+
+      <div class="sum" id="sum"></div>
+      <div id="cdList"></div>
+
+      <div id="icsBox" style="display:none">
+        <button class="btn" id="btnIcs">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          导出开票提醒到日历
+        </button>
+        <p style="font-size:11px;color:var(--c-text-3);text-align:center;margin-top:8px;line-height:1.6">
+          每个开票时刻提前 10 分钟响铃。iPhone 若无反应，用下方「复制」再手动建日程。
+        </p>
+      </div>
+    </div>
+
+    <!-- ============ 攻略 ============ -->
+    <div class="view" id="v-kb">
+      <div class="card">
+        <div class="pick">
+          <div class="pick-c">
+            <span class="lbl">从哪出发</span>
+            <select id="selFrom"></select>
+          </div>
+          <div class="pick-a">→</div>
+          <div class="pick-c">
+            <span class="lbl">去哪</span>
+            <select id="selTo"></select>
+          </div>
+        </div>
+      </div>
+      <div id="kbBody"></div>
+    </div>
+
+    <!-- ============ 规则库 ============ -->
+    <div class="view" id="v-lib">
+      <div class="card">
+        <input type="search" id="q2" placeholder="搜景区 / 城市" />
+        <div class="chips" id="libChips" style="margin-top:10px"></div>
+      </div>
+      <div id="libList"></div>
+    </div>
+
+    <!-- ============ 待核实 ============ -->
+    <div class="view" id="v-vf">
+      <div class="note" id="vfNote"></div>
+      <div id="vfList"></div>
+      <div class="btn-row" style="margin-top:14px">
+        <button class="btn ghost sm" id="btnExport">导出修正 CSV</button>
+        <button class="btn ghost sm" id="btnReset">清空本机修正</button>
+      </div>
+      <p style="font-size:11px;color:var(--c-text-3);margin-top:10px;line-height:1.7">
+        在手机上查完官方渠道就直接填进去，改动只存本机。导出的 CSV 拷回电脑覆盖
+        <code>data/booking_rules.csv</code>，重跑 <code>build_web.py</code> 即成为新基线。
+      </p>
+    </div>
+
+  </div>
+
+  <nav class="tabs" id="tabs">
+    <div class="tab on" data-v="cd">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
+      <span>倒计时</span>
+    </div>
+    <div class="tab" data-v="kb">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 21s-7-4.6-7-10a7 7 0 0 1 14 0c0 5.4-7 10-7 10z"/><circle cx="12" cy="11" r="2.6"/></svg>
+      <span>攻略</span>
+    </div>
+    <div class="tab" data-v="lib">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5V5a2 2 0 0 1 2-2h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a2 2 0 0 1-2-1.5z"/><line x1="8" y1="7" x2="15" y2="7"/><line x1="8" y1="11" x2="15" y2="11"/></svg>
+      <span>规则库</span>
+    </div>
+    <div class="tab" data-v="vf">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>
+      <span>待核实</span>
+      <div class="cnt" id="vfCnt">0</div>
+    </div>
+  </nav>
+</div>
+
+<div class="ov" id="ov"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="./data.js"></script>
+<script>
+(function(){
+'use strict';
+
+/* ================= Storage ================= */
+var Store=(function(){
+  var P='xqbb_',mem={},ok=true;
+  try{localStorage.setItem('__t','1');localStorage.removeItem('__t');}catch(e){ok=false;}
+  return{
+    get:function(k,d){try{
+      if(!ok)return (k in mem)?mem[k]:d;
+      var r=localStorage.getItem(P+k);
+      return r===null?d:JSON.parse(r);
+    }catch(e){return d;}},
+    set:function(k,v){try{
+      if(!ok){mem[k]=v;return;}
+      localStorage.setItem(P+k,JSON.stringify(v));
+    }catch(e){mem[k]=v;}},
+    del:function(k){try{localStorage.removeItem(P+k);}catch(e){}delete mem[k];}
+  };
+})();
+
+/* ================= 预览 / 调试入口 ================= */
+// ?now=2026-09-24T19:00  模拟"当前时刻"，用来演示开票当天、已错过等状态
+// ?demo=1                用演示规则集（写在独立 key，绝不碰真实数据）
+// ?date=2026-10-01&city=北京  指定初始游览日与城市
+var Q=new URLSearchParams(location.search);
+var DEMO=Q.get('demo')==='1';
+var OVR_KEY=DEMO?'demo_ovr':'ovr';
+function nowRef(){
+  var s=Q.get('now');
+  if(s){var d=new Date(s);if(!isNaN(d.getTime()))return d;}
+  return new Date();
+}
+
+/* ================= 数据 ================= */
+var DATA=window.BOOKING_DATA||{rules:[],cities:[]};
+var OVR=Store.get(OVR_KEY,{});        // rule_id -> 字段修正
+var EDITABLE=['advance_days','release_time','release_mode','difficulty',
+              'platform_name','platform_url','source_url','verified','note'];
+
+function rules(){
+  return DATA.rules.map(function(r){
+    var o=OVR[r.rule_id];
+    if(!o)return r;
+    var m={};for(var k in r)m[k]=r[k];
+    for(var k2 in o)m[k2]=o[k2];
+    return m;
+  });
+}
+
+/* ================= 日期工具（全部走本地日期，避开时区/DST） ================= */
+function today(){return ymd(nowRef());}
+function ymd(d){
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+function pad(n){return (n<10?'0':'')+n;}
+function parseYmd(s){
+  var p=String(s).split('-');
+  return new Date(+p[0],+p[1]-1,+p[2]);
+}
+function addDays(s,n){
+  var d=parseYmd(s);d.setDate(d.getDate()+n);return ymd(d);
+}
+function dayDiff(a,b){ // b - a，单位天
+  return Math.round((parseYmd(b)-parseYmd(a))/86400000);
+}
+function md(s){var p=s.split('-');return p[1]+'-'+p[2];}
+function wd(s){return '一二三四五六日'.charAt((parseYmd(s).getDay()+6)%7);}
+function hhmm(s){
+  if(!s||s==='-1')return null;
+  var p=String(s).split(':');
+  if(p.length!==2)return null;
+  var h=+p[0],m=+p[1];
+  if(isNaN(h)||isNaN(m))return null;
+  return {h:h,m:m,txt:pad(h)+':'+pad(m)};
+}
+
+/* ================= 状态机（与 scripts/countdown.py 逐条对齐） ================= */
+var ST={
+  ACTION_TODAY  :{o:0,t:'今天开抢',   c:'var(--st-action)'},
+  MISSED        :{o:1,t:'已过放票日', c:'var(--st-missed)'},
+  RELEASED_TODAY:{o:2,t:'今天已放票', c:'var(--st-released)'},
+  BOOKABLE_NOW  :{o:3,t:'现在可约',   c:'var(--st-open)'},
+  WAITING       :{o:4,t:'等待开票',   c:'var(--st-wait)'},
+  UNKNOWN       :{o:5,t:'规则未知',   c:'var(--st-none)'},
+  ONSITE        :{o:6,t:'现场取号',   c:'var(--st-none)'},
+  NO_BOOKING    :{o:7,t:'无需预约',   c:'var(--st-free)'},
+  PAST          :{o:8,t:'日期已过',   c:'var(--st-none)'}
+};
+
+function judge(r,visit,now){
+  var td=ymd(now), adv=r.advance_days, mode=r.release_mode||'',
+      rt=hhmm(r.release_time), diff=r.difficulty||0,
+      out={st:'UNKNOWN',openDate:null,openTime:null,lines:[]};
+
+  function fin(st){
+    out.st=st;
+    out.lines=Array.prototype.slice.call(arguments,1).filter(Boolean);
+    return out;
+  }
+
+  if(r.need_booking===0) return fin('NO_BOOKING', r.peak_note||'开放式景区，直接去');
+  if(dayDiff(td,visit)<0) return fin('PAST','游览日期早于今天');
+  if(mode==='onsite')     return fin('ONSITE','现场取号，无线上预约');
+  if(adv===null||adv===undefined||adv<0){
+    return fin('UNKNOWN','本条规则的提前天数尚未核实，算不出倒计时',
+      '先核对：'+(r.platform_name||'官方渠道'));
+  }
+
+  var openDate=addDays(visit,-adv), toOpen=dayDiff(td,openDate);
+  out.openDate=openDate; out.openTime=rt;
+
+  var prep=[];
+  if(r.need_id_card===1) prep.push('身份证号');
+  if(r.need_companion_id===1) prep.push('同行人全部实名信息');
+  var pt=prep.length?('，提前备好'+prep.join('、')):'';
+
+  if(mode==='rolling'){
+    if(toOpen>0) return fin('WAITING',
+      '<b>'+md(openDate)+'</b> 起可约（提前 '+adv+' 天开窗），还有 <b>'+toOpen+' 天</b>',
+      '窗口期内随时可约，不用掐点'+pt);
+    return fin('BOOKABLE_NOW',
+      '预约窗口已开（'+md(openDate)+' 起），距游览还有 <b>'+dayDiff(td,visit)+' 天</b>',
+      (diff>=4?'难度较高，建议今天就约掉':'尽快约掉')+pt);
+  }
+
+  // fixed_time：唯一「错过就真没有」的模式
+  if(toOpen>0){
+    var when=rt?('<b>'+md(openDate)+' '+rt.txt+'</b>')
+               :('<b>'+md(openDate)+'</b> 当天（放票时刻待核实）');
+    var tip=diff>=4
+      ?('开票即抢，务必设闹钟，提前登录'+(prep.length?('并备好'+prep.join('、')):''))
+      :('到点约即可'+pt);
+    return fin('WAITING','开票时间 '+when+'，还有 <b>'+toOpen+' 天</b>',tip);
+  }
+  if(toOpen===0){
+    var nowM=now.getHours()*60+now.getMinutes();
+    if(rt&&nowM<rt.h*60+rt.m){
+      var hrs=((rt.h*60+rt.m)-nowM)/60;
+      return fin('ACTION_TODAY',
+        '今天 <b>'+rt.txt+'</b> 开票，距现在 <b>'+hrs.toFixed(1)+' 小时</b>',
+        '现在就登录 '+(r.platform_name||'官方渠道')+pt);
+    }
+    return fin('RELEASED_TODAY',
+      '今天已放票（'+(rt?rt.txt:'时刻未核实')+'）',
+      '立刻去查余量，售罄快的话可蹲退票');
+  }
+  // 已过放票日：按难度分级，否则会误伤那些其实还有余票的场馆
+  var late=-toOpen, head='放票日为 <b>'+md(openDate)+'</b>，已过 <b>'+late+' 天</b>';
+  if(diff<=2) return fin('MISSED',head,'该馆通常不紧张，大概率仍有余票，直接去查即可');
+  if(diff===3) return fin('MISSED',head,'可能还有余票，尽快查；同时留意退票');
+  return fin('MISSED',head,'难度高，基本无票 —— 建议直接走备用方案');
+}
+
+/* ================= 通用 ================= */
+function $(id){return document.getElementById(id);}
+function esc(s){
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function stars(n){return n?new Array(n+1).join('★'):'—';}
+var toastT;
+function toast(m){
+  var t=$('toast');t.textContent=m;t.classList.add('on');
+  clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('on');},2400);
+}
+function gaps(r){
+  var g=[];
+  if(r.advance_days===null||r.advance_days===undefined||r.advance_days<0)g.push('提前天数');
+  if(!hhmm(r.release_time)&&r.release_mode==='fixed_time')g.push('放票时刻');
+  return g;
+}
+function gapScore(r){
+  var s=(r.advance_days===null||r.advance_days===undefined||r.advance_days<0)?2:0;
+  s+=hhmm(r.release_time)?0:1;
+  s+=r.src_confidence==='low'?2:(r.src_confidence==='mid'?1:0);
+  return s;
+}
+
+/* ================= 状态 ================= */
+var S={
+  view:Q.get('view')||'cd',
+  date:Q.get('date')||(DEMO?'':Store.get('date',''))||defaultDate(),
+  city:Q.get('city')||Store.get('city','北京'),
+  q:'',
+  libCity:'全部',
+  q2:'',
+  kbFrom:Q.get('kbfrom')||Store.get('kbfrom','')||'上海',
+  kbTo:Q.get('kbto')!=null?Q.get('kbto'):Store.get('kbto',''),
+  kbTab:Q.get('kbtab')||'攻略',
+  kbMode:'全部',
+  kbDays:parseInt(Q.get('kbdays'),10)||null
+};
+
+function defaultDate(){
+  // 默认给下一个国庆首日；已过则顺延到明年
+  var y=nowRef().getFullYear(), nd=y+'-10-01';
+  if(dayDiff(today(),nd)<0) nd=(y+1)+'-10-01';
+  return nd;
+}
+
+/* ================= 渲染：倒计时 ================= */
+function pick(){
+  var all=rules();
+  if(S.q.trim()){
+    var k=S.q.trim();
+    return all.filter(function(r){
+      return r.poi_name.indexOf(k)>=0||k.indexOf(r.poi_name)>=0||r.city.indexOf(k)>=0;
+    });
+  }
+  if(S.city==='全部')return all;
+  return all.filter(function(r){return r.city===S.city||r.province===S.city;});
+}
+
+function renderCd(){
+  $('dt').value=S.date;
+  var now=nowRef(), hit=pick();
+  $('hitN').textContent=hit.length?('共 '+hit.length+' 处'):'';
+
+  var pairs=hit.map(function(r){return {r:r,v:judge(r,S.date,now)};});
+  pairs.sort(function(a,b){
+    var d=ST[a.v.st].o-ST[b.v.st].o;
+    if(d)return d;
+    d=(b.r.difficulty||0)-(a.r.difficulty||0);
+    return d||a.r.rule_id.localeCompare(b.r.rule_id);
+  });
+
+  // 汇总条
+  var cnt={};
+  pairs.forEach(function(p){cnt[p.v.st]=(cnt[p.v.st]||0)+1;});
+  var keys=Object.keys(cnt).sort(function(a,b){return ST[a].o-ST[b].o;});
+  $('sum').innerHTML=keys.length?keys.map(function(k){
+    return '<div class="sum-i"><div class="sum-n" style="color:'+ST[k].c+'">'+cnt[k]+
+           '</div><div class="sum-l">'+ST[k].t+'</div></div>';
+  }).join(''):'';
+
+  // 列表
+  if(!pairs.length){
+    $('cdList').innerHTML='<div class="empty">没有匹配的地点<br>换个城市或关键词试试</div>';
+    $('icsBox').style.display='none';
+    return;
+  }
+  var html='',cur=null;
+  pairs.forEach(function(p){
+    var r=p.r,v=p.v,st=v.st;
+    if(st!==cur){
+      cur=st;
+      html+='<div class="grp"><span class="dot" style="background:'+ST[st].c+'"></span>'+
+            ST[st].t+' <span class="n">'+cnt[st]+'</span></div>';
+    }
+    html+='<div class="poi" style="border-left-color:'+ST[st].c+'" data-id="'+r.rule_id+'">'+
+      '<div class="poi-h"><div class="poi-n">'+esc(r.poi_name)+
+      (r.difficulty?'<span class="stars" style="margin-left:6px">'+stars(r.difficulty)+'</span>':'')+
+      '</div><div class="poi-c">'+esc(r.city)+'</div></div>'+
+      '<div class="poi-m">'+v.lines.join('<br>')+'</div>';
+    if(st==='MISSED'&&(r.backup_poi||r.backup_plan)){
+      html+='<div class="poi-alt">→ 替代：'+esc(r.backup_poi||'')+
+            (r.backup_poi&&r.backup_plan?'　':'')+esc(r.backup_plan||'')+'</div>';
+    }
+    if(r.need_booking===1&&r.verified!==1){
+      html+='<div class="poi-warn">规则未核实（'+esc(r.src_confidence||'?')+
+            ' 置信）　点开可填</div>';
+    }
+    html+='</div>';
+  });
+  $('cdList').innerHTML=html;
+
+  var icsN=pairs.filter(function(p){
+    return (p.v.st==='WAITING'||p.v.st==='ACTION_TODAY')&&p.v.openDate;
+  }).length;
+  $('icsBox').style.display=icsN?'block':'none';
+}
+
+/* ================= 渲染：规则库 ================= */
+function renderLib(){
+  var all=rules(),k=S.q2.trim();
+  var list=all.filter(function(r){
+    if(S.libCity==='待核实') { if(!(r.need_booking===1&&r.verified!==1)) return false; }
+    else if(S.libCity!=='全部'&&r.city!==S.libCity) return false;
+    if(k&&r.poi_name.indexOf(k)<0&&r.city.indexOf(k)<0&&
+       (r.platform_name||'').indexOf(k)<0) return false;
+    return true;
+  });
+  list.sort(function(a,b){
+    return (b.difficulty||0)-(a.difficulty||0)||a.rule_id.localeCompare(b.rule_id);
+  });
+  if(!list.length){
+    $('libList').innerHTML='<div class="empty">没有匹配的规则</div>';return;
+  }
+  $('libList').innerHTML=list.map(function(r){
+    var okIcon=r.need_booking===0
+      ?'<svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/></svg>'
+      :(r.verified===1
+        ?'<svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.4" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>'
+        :'<svg class="tick" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12.5"/><line x1="12" y1="16" x2="12" y2="16"/></svg>');
+    var sub=r.need_booking===0?'无需预约'
+      :[(r.advance_days>=0?('提前 '+r.advance_days+' 天'):'提前天数未知'),
+         (hhmm(r.release_time)?hhmm(r.release_time).txt+' 放票'
+           :(r.release_mode==='rolling'?'窗口内随时':'时刻未知'))].join(' · ');
+    return '<div class="lib" data-id="'+r.rule_id+'">'+okIcon+
+      '<div class="lib-b"><div class="lib-n">'+esc(r.poi_name)+'</div>'+
+      '<div class="lib-s">'+esc(r.city)+' · '+esc(sub)+'</div></div>'+
+      '<div class="lib-r"><div class="stars">'+(r.difficulty?stars(r.difficulty):'')+'</div></div>'+
+      '</div>';
+  }).join('');
+}
+
+/* ================= 渲染：攻略 ================= */
+/* 层次：
+   选出发地 + 目的地
+     ├ 没选目的地 -> 能去哪（点一条就等于选了目的地）
+     └ 都选了     -> 五个 tab：路线 / 景点 / 美食 / 住宿 / 攻略
+                     「攻略」把整条行程按天串起来，含交通与总花费          */
+
+var KB_TABS=['攻略','路线','景点','美食','住宿'];
+var MODE_GROUPS=['全部','高铁动车','普速火车','飞机','大巴'];
+var HOT_COLOR={'网红':'var(--st-action)','小众':'var(--st-open)','经典':'var(--st-wait)'};
+var HOT_DESC={'网红':'社交平台热度高，人也最多',
+              '小众':'游客少，本地人常去',
+              '经典':'到了就该去的标准项'};
+
+function modeGroup(r){
+  if(r.mode==='飞机')return '飞机';
+  if(r.mode==='大巴')return '大巴';
+  if(r.mode==='普速')return '普速火车';
+  return '高铁动车';
+}
+
+/* 选择要去的景点/美食：按目的地分开存，纯本地，勾完立刻重算 */
+var PICK=Store.get('pick',{});
+function pickedOf(to){var o=PICK[to||'_'];return o||{p:[],f:[]};}
+function togglePick(to,kind,id){
+  var k=to||'_',o=PICK[k]||{p:[],f:[]};
+  var arr=(kind==='poi')?o.p:o.f,i=arr.indexOf(id);
+  if(i>=0)arr.splice(i,1);else arr.push(id);
+  PICK[k]=o;Store.set('pick',PICK);
+}
+function isPicked(to,kind,id){
+  var o=pickedOf(to);
+  return ((kind==='poi')?o.p:o.f).indexOf(id)>=0;
+}
+function pickBox(to,kind,id){
+  var on=isPicked(to,kind,id);
+  return '<div class="pk'+(on?' on':'')+'" data-pick="'+kind+':'+id+'">'+
+         (on?'✓':'')+'</div>';
+}
+
+/* 只用「乘坐时间」。库里还存着 access/egress/buffer，但那是"市中心到车站"的
+   估值 —— 库不知道用户住哪，展示出来只会误导，所以前端一律不读不显示。 */
+function tripMin(r){return r.duration_min||0;}
+
+function mins(m){
+  if(m==null)return '—';
+  if(m<60)return m+'min';
+  var h=Math.floor(m/60),x=m%60;
+  return h+'h'+(x?(x<10?'0'+x:x):'');
+}
+function hm(t){ // 分钟数 -> HH:MM
+  t=((t%1440)+1440)%1440;
+  return pad(Math.floor(t/60))+':'+pad(t%60);
+}
+function toMin(s){
+  var p=hhmm(s);return p?p.h*60+p.m:null;
+}
+function money(a,b){
+  if(a==null)return '价待核实';
+  if(b!=null&&b>a)return '¥'+a+'-'+b;
+  return '¥'+a;
+}
+function yuan(n){return '¥'+Math.round(n).toLocaleString('zh-CN');}
+function warn(t){return t?'<div class="poi-warn">'+esc(t)+'</div>':'';}
+function transitOf(id){
+  return (DATA.transits||[]).filter(function(t){return t.poi_id===id;});
+}
+function transitLine(t){
+  if(t.mode==='打车'||t.mode==='景区交通'){
+    return '🚕 打车约 '+(t.taxi_min||'?')+'min'+(t.taxi_price?('　约 ¥'+t.taxi_price):'');
+  }
+  var icon=t.mode==='地铁'?'🚇':(t.mode==='公交'?'🚌':(t.mode==='动车'?'🚄':'🚶'));
+  return icon+' '+esc([t.line_name,t.station_name].filter(function(x){
+    return x&&x!=='—';}).join(' · '))+(t.walk_min?('　步行 '+t.walk_min+'min'):'');
+}
+
+function resolveDest(name){
+  var ds=DATA.dests||[],hit=null;
+  ds.forEach(function(d){if(!hit&&d.name===name)hit=d;});
+  if(!hit) ds.forEach(function(d){if(!hit&&d.city===name)hit=d;});
+  return hit;
+}
+function cityOf(n){var d=resolveDest(n);return d?d.city:n;}
+function poisOf(n){
+  var c=cityOf(n);
+  return (DATA.pois||[]).filter(function(p){return p.city===c;});
+}
+function foodsOf(n){
+  var c=cityOf(n);
+  return (DATA.foods||[]).filter(function(f){return f.city===c;});
+}
+function staysOf(n){
+  var c=cityOf(n);
+  return (DATA.stays||[]).filter(function(s){return s.city===c;});
+}
+function monthNow(){return nowRef().getMonth()+1;}
+function monthList(s){
+  return s?String(s).split(';').map(function(x){return parseInt(x,10);}):[];
+}
+function seasonState(d){
+  if(!d)return null;
+  var m=monthNow();
+  if(monthList(d.avoid_months).indexOf(m)>=0)
+    return {bad:true,txt:'本月（'+m+'月）不建议：'+(d.avoid_reason||'')};
+  if(monthList(d.best_months).indexOf(m)>=0)
+    return {bad:false,txt:'本月正是好时候'};
+  return {bad:false,txt:''};
+}
+function isPeak(){
+  var m=monthNow(),d=nowRef().getDate();
+  return (m===10&&d<=8)||(m===1)||(m===2)||(m===7)||(m===8)||(m===5&&d<=5);
+}
+
+/* ---------- 地理与时间：行程生成的基础 ---------- */
+function km(a,b){
+  if(a.lat==null||b.lat==null)return 5;
+  var R=6371,dLat=(b.lat-a.lat)*Math.PI/180,dLng=(b.lng-a.lng)*Math.PI/180,
+      la1=a.lat*Math.PI/180,la2=b.lat*Math.PI/180;
+  var h=Math.sin(dLat/2)*Math.sin(dLat/2)+
+        Math.cos(la1)*Math.cos(la2)*Math.sin(dLng/2)*Math.sin(dLng/2);
+  return 2*R*Math.asin(Math.sqrt(h));
+}
+function transferMin(a,b){
+  var d=km(a,b);
+  return Math.max(10,Math.round(d*1.4/25*60)+8);   // 绕行1.4倍 + 25km/h + 8min等车
+}
+/* 日落时刻估算（分钟）：按月份基准 + 纬度微调。标注为估算值 */
+function sunsetMin(lat,month){
+  var base=[17.6,18.1,18.5,19.0,19.4,19.7,19.7,19.3,18.6,18.0,17.5,17.3][month-1];
+  return Math.round((base+(32-(lat||32))*0.02)*60);
+}
+
+/* ---------- 行程生成器 ---------- */
+function buildPlan(from,to,days){
+  var city=cityOf(to), d=resolveDest(to);
+  var ps=poisOf(to).slice(), fs=foodsOf(to).slice();
+  var pk=pickedOf(to);
+  if(pk.p.length) ps=ps.filter(function(p){return pk.p.indexOf(p.poi_id)>=0;});
+  if(pk.f.length) fs=fs.filter(function(f){return pk.f.indexOf(f.food_id)>=0;});
+  var byPick=(pk.p.length>0||pk.f.length>0);
+  var routes=(DATA.routes||[]).filter(function(r){
+    return r.from_city===from&&r.to_city===to;})
+    .sort(function(a,b){return tripMin(a)-tripMin(b);});
+  var go=routes[0]||null;
+  var local=(from===to);
+
+  // 景点优先级：经典 > 网红 > 小众，同级按出片
+  var rank={'经典':0,'网红':1,'小众':2};
+  ps.sort(function(a,b){
+    var x=(rank[a.hot_type]||3)-(rank[b.hot_type]||3);
+    return x||((b.photo_score||0)-(a.photo_score||0));
+  });
+
+  var sunset=sunsetMin(d?d.center_lat:32,monthNow());
+  var plan=[], used={}, truncated=false,
+      spend={train:0,hotel:0,ticket:0,food:0,local:0};
+
+  // 往返交通
+  if(!local&&go){
+    spend.train=(go.price_min||0)*2;
+  }
+
+  for(var day=1;day<=days;day++){
+    var items=[], t=540;           // 默认 09:00 开始
+    var isFirst=(day===1), isLast=(day===days&&days>1);
+
+    if(isFirst&&!local&&go){
+      var dep=480;                 // 假设 08:00 出门
+      items.push({kind:'trip',name:from+' → '+to,
+        note:go.mode+(go.train_type&&go.train_type!=='—'?' '+go.train_type+'字头':'')+
+             '　乘坐 '+mins(go.duration_min)+'　'+money(go.price_min,go.price_max)+
+             (go.transfer_note&&go.transfer_note!=='直达'?'　⚠ '+go.transfer_note:''),
+        s:dep,e:dep+tripMin(go)});
+      t=dep+tripMin(go)+40;        // 出站与放行李的缓冲
+    }
+    if(isLast&&!local&&go){
+      // 返程压在最后，当天只排到出发前
+      var back=1080;               // 18:00 前后返程
+      var cap=back-60;
+      var cnt=0;
+      while(t<cap){
+        var nx=pickNext(items,ps,used,t,cap,sunset,fs,spend);
+        if(!nx)break;
+        t=nx; cnt++;
+        if(cnt>4)break;
+      }
+      var lastEnd=items.length?items[items.length-1].e:t;
+      if(back-lastEnd>=90){
+        items.push({kind:'free',name:'自由安排',
+          note:'库里的景点这趟已经排完了。可以买手信、回去补一个想再看的地方，'+
+               '或者早点到机场。',
+          s:lastEnd+10,e:back});
+      }
+      items.push({kind:'trip',name:to+' → '+from,
+        note:go.mode+'　乘坐 '+mins(go.duration_min)+'　'+money(go.price_min,go.price_max),
+        s:back,e:back+tripMin(go)});
+      plan.push({day:day,title:isLast?'返程':city,items:items});
+      continue;
+    }
+
+    var guard=0;
+    while(t<1290&&guard++<12){     // 排到 21:30
+      var nt=pickNext(items,ps,used,t,1290,sunset,fs,spend);
+      if(!nt)break;
+      t=nt;
+    }
+    // 景点提前排完时不能直接 break —— 那样返程交通会丢，
+    // 用户选了 5 天却只看到 3 天且没有回程。把这天当最后一天处理。
+    if(!items.length){
+      if(!local&&go&&day>1){
+        var back2=1080;
+        plan.push({day:day,title:'返程',items:[{kind:'trip',
+          name:to+' → '+from,
+          note:go.mode+'　乘坐 '+mins(go.duration_min)+'　'+
+               money(go.price_min,go.price_max)+
+               '　（库里的景点在前 '+(day-1)+' 天就排完了）',
+          s:back2,e:back2+tripMin(go)}]});
+      }
+      truncated=(day<days);
+      break;
+    }
+    plan.push({day:day,title:(isFirst&&!local?'抵达 '+city:city),items:items});
+  }
+
+  // 门票合计
+  plan.forEach(function(dd){dd.items.forEach(function(it){
+    if(it.kind==='poi'&&it.ref.ticket_price>0) spend.ticket+=it.ref.ticket_price;
+  });});
+  // 住宿：按中档下限 × 晚数 × 旺季系数
+  var st=staysOf(to).filter(function(s){return s.area_type!=='交通枢纽';})
+         .sort(function(a,b){return (a.price_mid_low||0)-(b.price_mid_low||0);});
+  var nights=local?0:Math.max(0,plan.length-1);
+  var pick=st[0]||null;
+  if(pick&&nights){
+    var mult=isPeak()?(pick.peak_multiplier||1.8):1;
+    spend.hotel=(pick.price_mid_low||0)*nights*mult;
+  }
+  spend.local=plan.length*30;      // 市内交通每天 30 估
+
+  return {plan:plan,spend:spend,go:go,dest:d,city:city,
+          stay:pick,nights:nights,local:local,routes:routes,
+          byPick:byPick,nPick:pk.p.length,nPickF:pk.f.length,
+          truncated:truncated,askedDays:days};
+
+  /* 选下一项：先看该不该吃饭，再选最近的没去过的景点 */
+  function pickNext(items,ps,used,t,cap,sunset,fs,spend){
+    var last=null;
+    for(var i=items.length-1;i>=0;i--){
+      if(items[i].kind==='poi'){last=items[i].ref;break;}
+    }
+    // 饭点：11:40-13:20 午餐，17:40-19:40 晚餐
+    var hasLunch=items.some(function(x){return x.kind==='food'&&x.meal==='午餐';});
+    var hasDinner=items.some(function(x){return x.kind==='food'&&x.meal==='晚餐';});
+    if(!hasLunch&&t>=700&&t<800&&fs.length){
+      var f=pickFood(fs,used);
+      if(f){used['F'+f.food_id]=1;
+        items.push({kind:'food',meal:'午餐',name:f.store_name&&f.store_name!=='—'
+          ?f.store_name:f.dish_name,ref:f,
+          note:f.dish_name+(f.price_per_person>0?'　人均约 ¥'+f.price_per_person:'')+
+               (f.avoid_tip?'　'+f.avoid_tip:''),s:t,e:t+60});
+        spend.food+=(f.price_per_person>0?f.price_per_person:60);
+        return t+60+10;}
+    }
+    if(!hasDinner&&t>=1060&&t<1180&&fs.length){
+      var f2=pickFood(fs,used);
+      if(f2){used['F'+f2.food_id]=1;
+        items.push({kind:'food',meal:'晚餐',name:f2.store_name&&f2.store_name!=='—'
+          ?f2.store_name:f2.dish_name,ref:f2,
+          note:f2.dish_name+(f2.price_per_person>0?'　人均约 ¥'+f2.price_per_person:'')+
+               (f2.avoid_tip?'　'+f2.avoid_tip:''),s:t,e:t+75});
+        spend.food+=(f2.price_per_person>0?f2.price_per_person:80);
+        return t+75+10;}
+    }
+
+    // 日落机位优先卡在日落前
+    var cands=ps.filter(function(p){return !used[p.poi_id];});
+    if(!cands.length)return null;
+    var sunsetCand=cands.filter(function(p){
+      return /日落|蓝调|夕|夜/.test(p.best_light||'')||p.poi_type==='机位';});
+    var pickP=null;
+    if(sunsetCand.length&&t+(sunsetCand[0].stay_minutes||60)>=sunset-90&&t<sunset){
+      pickP=nearest(sunsetCand,last);
+    }
+    if(!pickP) pickP=nearest(cands,last);
+    if(!pickP)return null;
+
+    var move=last?transferMin(last,pickP):0;
+    var s=t+move;
+    var op=toMin(pickP.open_time), cl=toMin(pickP.close_time);
+    if(op!=null&&s<op) s=op;
+    var stay=pickP.stay_minutes||60;
+    if(cl!=null&&s+stay>cl){
+      // 今天赶不上了，换一个
+      var alt=cands.filter(function(p){return p!==pickP;});
+      if(!alt.length)return null;
+      pickP=nearest(alt,last);
+      if(!pickP)return null;
+      move=last?transferMin(last,pickP):0;
+      s=t+move;
+      op=toMin(pickP.open_time);cl=toMin(pickP.close_time);
+      if(op!=null&&s<op)s=op;
+      stay=pickP.stay_minutes||60;
+      if(cl!=null&&s+stay>cl)return null;
+    }
+    if(s+stay>cap)return null;
+
+    used[pickP.poi_id]=1;
+    if(move>0&&last) items.push({kind:'move',name:'前往 '+pickP.name,far:move>=35,
+      note:(transitOf(pickP.poi_id).length?transitLine(transitOf(pickP.poi_id)[0])
+           :('约 '+move+'min'))+
+           (move>=35?'　⚠ 这段要 '+move+' 分钟，是当天最远的一跳，'+
+                     '不想折返可以挪到顺路的那天':''),
+      s:t,e:s});
+    var bk=null;
+    if(pickP.booking_rule_id){
+      rules().forEach(function(x){if(x.rule_id===pickP.booking_rule_id)bk=x;});
+    }
+    var bkNote='';
+    if(bk){
+      bkNote='\n🎫 需提前预约：'+(bk.platform_name||'官方渠道')+
+        (bk.advance_days>=0
+          ?('　提前 '+bk.advance_days+' 天'+
+            (bk.release_time&&bk.release_time!=='-1'?' '+bk.release_time+' 放票':''))
+          :'　提前天数未核实')+
+        (bk.difficulty>=4?'　难度 '+stars(bk.difficulty)+'，开票即抢':'');
+    }
+    items.push({kind:'poi',name:pickP.name,ref:pickP,book:bk,
+      note:(pickP.why_worth||'')+
+           (pickP.best_light?'　📷 '+pickP.best_light:'')+
+           bkNote+
+           (pickP.avoid_tip?'\n⚠ '+pickP.avoid_tip:''),
+      s:s,e:s+stay});
+    return s+stay;
+  }
+  function nearest(list,from){
+    if(!from)return list[0];
+    var best=null,bd=1e9;
+    list.forEach(function(p){
+      var d2=km(from,p);
+      if(d2<bd){bd=d2;best=p;}
+    });
+    return best||list[0];
+  }
+  function pickFood(fs,used){
+    var c=fs.filter(function(f){return !used['F'+f.food_id]&&
+      f.store_name&&f.store_name!=='—';});
+    if(!c.length)c=fs.filter(function(f){return !used['F'+f.food_id];});
+    if(!c.length)return null;
+    // 排行程时优先用人工录入的 —— 它们带避坑提示（哪家是游客店、
+    // 哪家要先谈价），比高德的一个评分有用。高德那批留给「美食」页浏览。
+    c.sort(function(a,b){
+      var am=(a.rating_source==='高德')?1:0,bm=(b.rating_source==='高德')?1:0;
+      if(am!==bm)return am-bm;
+      var aq=(a.queue_level==null||a.queue_level==='')?3:a.queue_level;
+      var bq=(b.queue_level==null||b.queue_level==='')?3:b.queue_level;
+      if(aq!==bq)return aq-bq;
+      return (b.rating||0)-(a.rating||0);   // 同档按评分
+    });
+    return c[0];
+  }
+}
+
+/* ---------- tab：攻略 ---------- */
+function tabPlan(from,to){
+  var d=resolveDest(to);
+  var days=S.kbDays||(d?Math.max(1,d.suggest_days_min||2):2);
+  S.kbDays=days;
+  var res=buildPlan(from,to,days);
+  var sp=res.spend, total=sp.train+sp.hotel+sp.ticket+sp.food+sp.local;
+
+  var h='<div class="card"><span class="lbl">玩几天</span>'+
+    '<div class="chips" id="dayChips">'+[1,2,3,4,5,6,7].map(function(n){
+      return '<div class="chip'+(n===days?' on':'')+'" data-day="'+n+'">'+
+             n+' 天</div>';}).join('')+'</div>';
+  if(d) h+='<p class="caliber" style="margin-top:8px">库里对 '+esc(d.name)+
+    ' 的建议是 '+d.suggest_days_min+'-'+d.suggest_days_max+' 天（含往返）</p>';
+  h+='</div>';
+
+  if(res.byPick){
+    h+='<div class="note">按你勾选的 <b>'+res.nPick+' 处景点</b>'+
+       (res.nPickF?' · <b>'+res.nPickF+' 条美食</b>':'')+' 排的行程。'+
+       '<span id="pickClear" style="color:var(--c-primary);cursor:pointer">清空选择</span>'+
+       '　去「景点」「美食」页可以改。</div>';
+  }else{
+    h+='<div class="note">现在是<b>自动排</b>（经典 → 网红 → 小众，按距离就近串）。'+
+       '想自己定就去「景点」「美食」页勾选，勾完这里立刻重排。</div>';
+  }
+
+  if(!res.plan.length){
+    return h+'<div class="empty">'+(res.byPick
+      ?'你勾选的项排不出行程（可能开放时间冲突）<br>试试多选几个或换天数'
+      :'这个目的地还没有足够的景点数据来排行程')+'</div>';
+  }
+
+  if(res.truncated){
+    h+='<div class="poi-warn" style="margin-bottom:12px">'+
+       '库里 '+esc(res.city)+' 的景点只够排 '+res.plan.length+' 天，'+
+       '你选的 '+res.askedDays+' 天排不满。返程已放在第 '+res.plan.length+' 天。'+
+       '想待久一点可以少选几个景点慢慢逛，或者搭配周边目的地。</div>';
+  }
+
+  // 花费总览
+  h+='<div class="hero"><h2>'+esc(res.city)+' '+res.plan.length+'天'+
+     (res.nights?res.nights+'晚':'')+'</h2>'+
+     '<div class="sub">人均预估 <b style="font-size:19px">'+yuan(total)+
+     '</b> 起（不含购物）</div><div class="kv">'+
+     (sp.train?'<div>往返交通<b>'+yuan(sp.train)+'</b></div>':'')+
+     (sp.hotel?'<div>住宿 '+res.nights+'晚<b>'+yuan(sp.hotel)+'</b></div>':'')+
+     '<div>门票<b>'+yuan(sp.ticket)+'</b></div>'+
+     '<div>吃饭<b>'+yuan(sp.food)+'</b></div>'+
+     '<div>市内交通<b>'+yuan(sp.local)+'</b></div>'+
+     '</div>';
+  if(isPeak()&&res.stay) h+='<div class="bad">已按旺季房价（×'+
+     res.stay.peak_multiplier+'）估算住宿</div>';
+  h+='</div>';
+  h+='<p class="caliber">花费按<b>库里的区间下限</b>估算：交通取票价下限×2，'+
+     '住宿取 '+(res.stay?esc(res.stay.area_name):'中档')+' 舒适型下限，'+
+     '吃饭按每餐人均估值。<b>都是估值，实际按当日价格浮动。</b></p>';
+
+  // 逐日
+  res.plan.forEach(function(dd){
+    h+='<div class="sec"><div class="sec-n">DAY '+dd.day+'</div>'+
+       '<div class="sec-c">'+esc(dd.title)+'</div></div>';
+    dd.items.forEach(function(it){
+      var icon=it.kind==='trip'?'🚄':(it.kind==='food'?'🍜':
+               (it.kind==='move'?'🚇':(it.kind==='free'?'🕐':'📍')));
+      var col=it.kind==='trip'?'var(--st-action)':
+              (it.kind==='food'?'var(--st-open)':
+              (it.kind==='move'||it.kind==='free'?'var(--c-text-3)'
+               :'var(--st-wait)'));
+      var clickable=(it.kind==='poi'||it.kind==='food');
+      h+='<div class="'+(it.kind==='move'?'arr':'poi')+'"'+
+        (it.kind==='move'?'':' style="border-left-color:'+col+'"')+
+        (clickable?' data-kb="'+(it.kind==='poi'?'poi':'food')+'" data-id="'+
+          (it.kind==='poi'?it.ref.poi_id:it.ref.food_id)+'"':'')+'>'+
+        '<div class="'+(it.kind==='move'?'arr-h':'poi-h')+'">'+
+        '<div class="'+(it.kind==='move'?'':'poi-n')+'">'+icon+' '+esc(it.name)+
+        (it.meal?'<span class="badge">'+it.meal+'</span>':'')+'</div>'+
+        (it.kind!=='move'?'<div class="poi-c" style="font-family:var(--font-mono)">'+
+          hm(it.s)+'-'+hm(it.e)+'</div>':'')+'</div>'+
+        (it.note?'<div class="'+(it.kind==='move'?'arr-m':'poi-m')+'">'+
+          esc(it.note).replace(/\n/g,'<br>')+'</div>':'')+
+        '</div>';
+    });
+  });
+  h+='<p class="caliber">时段由「建议停留时长 + 开放时间 + 景点间距离」排出，'+
+     '日落类机位尽量卡在日落前（本月约 '+hm(sunsetMin(d?d.center_lat:32,monthNow()))+
+     '，估算）。<b>交通只算车上时间</b>，出门请自己往前留。'+
+     '转场按直线距离估，用高德会更准。</p>';
+  return h;
+}
+
+/* ---------- tab：路线 ---------- */
+function tabRoute(from,to){
+  var all=(DATA.routes||[]).filter(function(r){
+    return r.from_city===from&&r.to_city===to;});
+  if(!all.length) return '<div class="empty">这一对城市的交通还没入库</div>';
+
+  var h='';
+  var groups=['全部'].concat(MODE_GROUPS.slice(1).filter(function(g){
+    return all.some(function(r){return modeGroup(r)===g;});}));
+  if(groups.length>2){
+    h+='<div class="chips" id="wayChips" style="margin-bottom:11px">'+
+       groups.map(function(g){
+         return '<div class="chip'+(g===S.kbMode?' on':'')+'" data-m="'+g+'">'+
+                g+'</div>';}).join('')+'</div>';
+  }
+  var ways=all.filter(function(r){
+    return S.kbMode==='全部'||modeGroup(r)===S.kbMode;})
+    .sort(function(a,b){return tripMin(a)-tripMin(b);});
+  if(!ways.length) h+='<div class="empty" style="padding:16px">这个方式没有线路</div>';
+
+  ways.forEach(function(r,i){
+    var night=(r.mode==='普速'&&(r.duration_min||0)>=360);
+    h+='<div class="way'+(i===0?' best':'')+'" data-kb="route" data-id="'+r.route_id+'">'+
+      '<div class="way-h"><div class="way-n">'+esc(r.mode)+
+      ((r.train_type&&r.train_type!=='—')?' '+esc(r.train_type)+'字头':'')+
+      (i===0&&ways.length>1?'<span class="badge" style="background:#ECFDF5;color:#047857">最快</span>':'')+
+      (night?'<span class="badge" style="background:#EEF2FF;color:#4338CA">夜车</span>':'')+
+      '</div><div class="way-p">'+money(r.price_min,r.price_max)+'</div></div>'+
+      '<div class="way-t">乘坐 <b>'+mins(r.duration_min)+'</b></div>'+
+      '<div class="way-s">'+esc(r.station_from||'')+' → '+esc(r.station_to||'')+
+      (r.frequency?'　班次'+esc(r.frequency):'')+
+      (r.transfer_note&&r.transfer_note!=='直达'?'<br>⚠ '+esc(r.transfer_note):'')+
+      (night?'<br>夜车卧铺省一晚酒店，白天不占用':'')+
+      '</div></div>';
+  });
+  h+='<p class="caliber">时间只算<b>车上</b>，出门请自己往前留。'+
+     '<b>不存具体车次</b>，出发前用 12306 或高德查当日班次。</p>';
+
+  // 到站后怎么去
+  var city=cityOf(to);
+  var arr=(DATA.arrivals||[]).filter(function(a){return a.city===city;});
+  if(arr.length){
+    h+='<div class="sec"><div class="sec-n">到站后怎么去</div>'+
+       '<div class="sec-c">'+arr.length+' 条</div></div>';
+    var by={};
+    arr.forEach(function(a){(by[a.station_name]=by[a.station_name]||[]).push(a);});
+    Object.keys(by).forEach(function(st){
+      h+='<div class="grp"><span class="dot" style="background:var(--st-wait)"></span>'+
+         esc(st)+'站出发 <span class="n">'+by[st].length+'</span></div>';
+      by[st].forEach(function(a){
+        var ic=a.mode==='地铁'?'🚇':(a.mode==='公交'?'🚌':
+               (a.mode==='打车'?'🚕':(a.mode==='步行'?'🚶':'🚄')));
+        h+='<div class="arr"><div class="arr-h">'+ic+' 去 '+
+           esc(a.to_poi_name==='—'?'市区':a.to_poi_name)+
+           '<span style="float:right;font-weight:400;font-size:12px">'+
+           (a.duration_min?mins(a.duration_min):'')+(a.price?'　¥'+a.price:'')+
+           '</span></div><div class="arr-m">'+esc(a.transfer_note||a.line_name||'')+
+           (a.walk_min?'　<b>出站步行 '+a.walk_min+'min</b>':'')+
+           (a.note?'<br>'+esc(a.note):'')+'</div></div>';
+      });
+    });
+  }
+  return h;
+}
+
+/* ---------- tab：景点 ---------- */
+function tabPois(to){
+  var ps=poisOf(to);
+  if(!ps.length)return '<div class="empty">这个地方的景点还没入库</div>';
+  var pk=pickedOf(to);
+  var h='<div class="note">点左边圆圈<b>勾选你想去的</b>，'+
+        '「攻略」页会只按你选的排行程。'+
+        (pk.p.length?'已选 <b>'+pk.p.length+'</b> 处。':'不勾就自动排。')+'</div>';
+  ['网红','小众','经典'].forEach(function(ht){
+    var g=ps.filter(function(r){return r.hot_type===ht;});
+    if(!g.length)return;
+    g.sort(function(a,b){return (b.photo_score||0)-(a.photo_score||0);});
+    h+='<div class="grp"><span class="dot" style="background:'+HOT_COLOR[ht]+
+       '"></span>'+ht+' <span class="n">'+g.length+' · '+HOT_DESC[ht]+'</span></div>';
+    g.forEach(function(r){
+      var meta=[mins(r.stay_minutes),
+        r.ticket_price===0?'免费':(r.ticket_price>0?'¥'+r.ticket_price:'票价待核实'),
+        (r.official_level&&r.official_level!=='无')?r.official_level:''];
+      h+='<div class="poi" style="border-left-color:'+HOT_COLOR[ht]+
+        '" data-kb="poi" data-id="'+r.poi_id+'">'+
+        '<div class="poi-h">'+pickBox(S.kbTo,'poi',r.poi_id)+
+        '<div class="poi-n" style="flex:1">'+esc(r.name)+'</div>'+
+        '<div class="poi-c">'+(r.photo_score?('出片 '+r.photo_score):'')+'</div></div>'+
+        '<div class="poi-m">'+meta.filter(Boolean).join(' · ')+
+        (r.why_worth?'<br>'+esc(r.why_worth):'')+'</div>';
+      var tr=transitOf(r.poi_id);
+      if(tr.length)h+='<div class="poi-m" style="color:var(--c-primary-dark)">'+
+        transitLine(tr[0])+'</div>';
+      h+=warn(r.avoid_tip)+'</div>';
+    });
+  });
+  return h;
+}
+
+/* ---------- tab：美食 ---------- */
+function tabFoods(to){
+  var fs=foodsOf(to);
+  if(!fs.length)return '<div class="empty">这个地方的美食还没入库</div>';
+  var pk=pickedOf(to);
+  var nAmap=fs.filter(function(r){return r.rating_source==='高德';}).length;
+  var nMan=fs.length-nAmap;
+  var h='<div class="note">点左边圆圈<b>勾选你想吃的</b>，「攻略」页会排进饭点。'+
+        (pk.f.length?'已选 <b>'+pk.f.length+'</b> 条。':'')+
+        '<br><b>'+nMan+' 条人工录入</b>（老字号与地标老店，带避坑提示，人均是估值）'+
+        '　<b>'+nAmap+' 条高德拉取</b>（有真实评分和人均，但没有避坑）。'+
+        '<br>评分来自高德，<b>不是大众点评</b> —— 点评评分没有开放接口、抓不到。</div>';
+  // 人工录入的排前面 —— 它们带避坑信息，比一个评分值钱。
+  // 高德批量拉的排最后：有真实评分和人均，但没有避坑。
+  var order=['中华老字号','米其林','黑珍珠','必吃榜','地标老店',
+             '地方特色','高德POI'];
+  var gp={};
+  fs.forEach(function(r){(gp[r.list_source]=gp[r.list_source]||[]).push(r);});
+  order.concat(Object.keys(gp)).filter(function(v,i,a){
+    return a.indexOf(v)===i&&gp[v];}).forEach(function(src){
+    var g=gp[src].slice().sort(function(a,b){
+      return (b.queue_level||0)-(a.queue_level||0);});
+    h+='<div class="grp"><span class="dot" style="background:var(--st-open)"></span>'+
+       esc(src)+' <span class="n">'+g.length+'</span></div>';
+    g.forEach(function(r){
+      var nm=(r.store_name&&r.store_name!=='—')?esc(r.store_name)
+             :'<span style="color:var(--c-text-3)">未指定店铺</span>';
+      h+='<div class="poi" style="border-left-color:var(--st-open)"'+
+        ' data-kb="food" data-id="'+r.food_id+'">'+
+        '<div class="poi-h">'+pickBox(S.kbTo,'food',r.food_id)+
+        '<div class="poi-n" style="flex:1">'+nm+'</div>'+
+        '<div class="poi-c">'+(r.price_per_person>0
+          ?('人均约 ¥'+r.price_per_person):'价待核实')+'</div></div>'+
+        '<div class="poi-m">'+esc(r.dish_name)+
+        (r.rating?' · <b>'+r.rating+'分</b>'+(r.rating_source?'('+esc(r.rating_source)+')':''):'')+
+        (r.queue_level?' · 排队 '+stars(r.queue_level):'')+
+        (r.best_time?' · '+esc(r.best_time):'')+
+        (r.why_worth?'<br>'+esc(r.why_worth):'')+'</div>'+
+        warn(r.avoid_tip)+'</div>';
+    });
+  });
+  return h;
+}
+
+/* ---------- tab：住宿 ---------- */
+function tabStays(to){
+  var ss=staysOf(to);
+  if(!ss.length)return '<div class="empty">这个地方的住宿还没入库</div>';
+  var peak=isPeak();
+  var h='<div class="note">住宿最关键的不是订哪家，是<b>住哪个片区</b> —— '+
+        '住错片区每天多花两小时通勤。<br>价格是<b>区间估值</b>，'+
+        (peak?'下面已按旺季系数换算。':'当前按平日价显示。')+
+        '实时房价拿不到，订房请去携程或飞猪比价。</div>';
+  var order={'核心景区':0,'商业中心':1,'交通枢纽':2};
+  ss.slice().sort(function(a,b){
+    return (order[a.area_type]||3)-(order[b.area_type]||3)||
+           (a.price_mid_low||0)-(b.price_mid_low||0);
+  }).forEach(function(s){
+    var m=peak?(s.peak_multiplier||1.8):1;
+    function rng(a,b){
+      if(a==null)return '—';
+      return '¥'+Math.round(a*m)+'-'+Math.round(b*m);
+    }
+    var col=s.area_type==='核心景区'?'var(--st-open)':
+            (s.area_type==='商业中心'?'var(--st-wait)':'var(--c-text-3)');
+    h+='<div class="poi" style="border-left-color:'+col+'">'+
+      '<div class="poi-h"><div class="poi-n">'+esc(s.area_name)+
+      '<span class="badge">'+esc(s.area_type)+'</span></div>'+
+      '<div class="poi-c">'+(peak?'旺季 ×'+s.peak_multiplier:'平日')+'</div></div>'+
+      '<div class="poi-m">'+esc(s.why_here||'')+'<br>'+
+      '🚇 '+esc(s.metro_access||'')+
+      (s.walk_to?'<br>🚶 '+esc(s.walk_to):'')+'</div>'+
+      '<div class="poi-m" style="font-family:var(--font-mono);font-size:12px">'+
+      '经济 '+rng(s.price_eco_low,s.price_eco_high)+
+      '　舒适 '+rng(s.price_mid_low,s.price_mid_high)+
+      '　高档 '+rng(s.price_high_low,s.price_high_high)+'</div>'+
+      (s.example_hotels?'<div class="poi-m" style="color:var(--c-text-3)">'+
+        '举例：'+esc(s.example_hotels)+'</div>':'')+
+      warn(s.avoid_tip)+'</div>';
+  });
+  return h;
+}
+
+/* ---------- 没选目的地：能去哪 ---------- */
+function renderDestList(from){
+  var rs=(DATA.routes||[]).filter(function(r){return r.from_city===from;});
+  var byTo={};
+  rs.forEach(function(r){(byTo[r.to_city]=byTo[r.to_city]||[]).push(r);});
+  var items=Object.keys(byTo).map(function(to){
+    var g=byTo[to].slice().sort(function(a,b){return tripMin(a)-tripMin(b);});
+    return {to:to,best:g[0],n:g.length,d:resolveDest(to)};
+  }).sort(function(a,b){return tripMin(a.best)-tripMin(b.best);});
+
+  var h='<div class="note">点任意一条就展开完整攻略。按<b>乘坐时间</b>排序，'+
+        '标红的是这个月不建议去的。</div>';
+  var lp=poisOf(from).length, lf=foodsOf(from).length;
+  if(lp||lf){
+    h+='<div class="dest-row" style="border-left-color:var(--st-free)" data-to="'+
+       esc(from)+'"><div class="dr-h"><div class="dr-n">'+esc(from)+' 本地'+
+       '<span class="badge" style="background:#ECFDF5;color:#047857">不用交通</span>'+
+       '</div><div class="dr-t">市内</div></div>'+
+       '<div class="dr-m">'+lp+' 处景点 · '+lf+' 条美食</div></div>';
+  }
+  if(!items.length){
+    h+='<div class="empty">库里还没有从 '+esc(from)+' 出发的线路</div>';
+    $('kbBody').innerHTML=h;return;
+  }
+  items.forEach(function(it){
+    var r=it.best,d=it.d,ss=seasonState(d);
+    var meta=[modeGroup(r),money(r.price_min,r.price_max)];
+    if(d)meta.push(d.suggest_days_min+'-'+d.suggest_days_max+' 天');
+    if(it.n>1)meta.push(it.n+' 种走法');
+    h+='<div class="dest-row'+(ss&&ss.bad?' off':'')+'" data-to="'+esc(it.to)+'">'+
+      '<div class="dr-h"><div class="dr-n">'+esc(it.to)+
+      ((d&&d.tag_niche>=60)?'<span class="badge" style="background:#ECFDF5;color:#047857">小众</span>':'')+
+      '</div><div class="dr-t">'+mins(tripMin(r))+'</div></div>'+
+      '<div class="dr-m">'+meta.join('　')+
+      (d&&d.one_liner?'<br>'+esc(d.one_liner):'')+'</div>'+
+      (ss&&ss.bad?'<div class="poi-warn">'+esc(ss.txt)+'</div>':'')+'</div>';
+  });
+  h+='<p class="caliber">时间只算<b>车上</b>。</p>';
+  $('kbBody').innerHTML=h;
+}
+
+/* ---------- 目的地概览卡 ---------- */
+function heroOf(name,localMode){
+  var d=resolveDest(name);
+  if(!d)return '';
+  var ss=seasonState(d);
+  var h='<div class="hero"><h2>'+esc(d.name)+'</h2>'+
+    '<div class="sub">'+esc(d.one_liner||'')+'</div><div class="kv">'+
+    '<div>建议天数<b>'+(localMode?'1 天':(d.suggest_days_min+'-'+d.suggest_days_max+' 天'))+
+    '</b></div><div>最佳月份<b>'+(d.best_months?d.best_months.split(';').join('/'):'—')+
+    '</b></div><div>假日拥挤<b>'+stars(d.crowd_holiday)+'</b></div>'+
+    (d.altitude_m!=null?'<div>海拔<b>'+d.altitude_m+'m</b></div>':'')+'</div>';
+  if(ss&&ss.bad)h+='<div class="bad">⚠ '+esc(ss.txt)+'</div>';
+  else if(d.avoid_months)h+='<div class="bad">避开 '+
+    d.avoid_months.split(';').join('/')+' 月：'+esc(d.avoid_reason||'')+'</div>';
+  if(d.altitude_m>=3000)h+='<div class="bad">高海拔，带老人小孩需预留适应时间</div>';
+  return h+'</div>';
+}
+
+/* ---------- 本地游 ---------- */
+function tabLocalTransit(city){
+  var ps=poisOf(city), trs=[];
+  ps.forEach(function(p){transitOf(p.poi_id).forEach(function(t){trs.push([p,t]);});});
+  if(!trs.length)return '<div class="empty">这个城市的接驳还没入库</div>';
+  // 按实际出现的 mode 动态分组 —— 写死三组会把轮渡、动车这类静默丢掉
+  var ICON={'地铁':'🚇 地铁可达','公交':'🚌 靠公交','打车':'🚕 只能打车',
+            '轮渡':'⛴ 要坐船','动车':'🚄 要坐城际','景区交通':'🚐 景区交通',
+            '步行':'🚶 步行可达'};
+  var ORDER=['地铁','轮渡','动车','公交','步行','景区交通','打车'];
+  var byMode={};
+  trs.forEach(function(x){
+    var m=x[1].mode||'其他';
+    (byMode[m]=byMode[m]||[]).push(x);
+  });
+  var modes=ORDER.filter(function(m){return byMode[m];})
+    .concat(Object.keys(byMode).filter(function(m){return ORDER.indexOf(m)<0;}));
+  var sub=byMode['地铁']||[];
+  var h='<div class="note">本地游不用算往返交通，重点是<b>别一天里横跨全城</b>。'+
+        (sub.length?'有 '+sub.length+' 处能地铁直达。':'这个城市轨道覆盖有限。')+'</div>';
+  modes.forEach(function(m){
+    var g=byMode[m];
+    h+='<div class="grp"><span class="dot" style="background:var(--st-wait)"></span>'+
+       (ICON[m]||esc(m))+' <span class="n">'+g.length+'</span></div>';
+    g.forEach(function(x){
+      h+='<div class="arr"><div class="arr-h">'+esc(x[0].name)+'</div>'+
+         '<div class="arr-m">'+transitLine(x[1])+
+         (x[1].note?'<br>'+esc(x[1].note):'')+'</div></div>';
+    });
+  });
+  h+='<p class="caliber">线路与站名是库里的年级稳定信息。'+
+     '<b>实时换乘与到站请用高德</b>，比库里准。</p>';
+  return h;
+}
+
+/* ---------- 主渲染 ---------- */
+function renderKb(){
+  var from=S.kbFrom,to=S.kbTo;
+  if(!from){$('kbBody').innerHTML='<div class="empty">先选出发地</div>';return;}
+  if(!to){renderDestList(from);return;}
+
+  var local=(to===from);
+  var tabs=local?['攻略','景点','美食','住宿','市内交通']:KB_TABS;
+  if(tabs.indexOf(S.kbTab)<0) S.kbTab=tabs[0];
+
+  var h=heroOf(to,local);
+  h+='<div class="chips" id="kbTabs" style="margin:12px 0 4px">'+
+     tabs.map(function(t){
+       return '<div class="chip'+(t===S.kbTab?' on':'')+'" data-t="'+t+'">'+
+              t+'</div>';}).join('')+'</div>';
+
+  if(S.kbTab==='攻略') h+=tabPlan(from,to);
+  else if(S.kbTab==='路线') h+=tabRoute(from,to);
+  else if(S.kbTab==='景点') h+=tabPois(to);
+  else if(S.kbTab==='美食') h+=tabFoods(to);
+  else if(S.kbTab==='住宿') h+=tabStays(to);
+  else if(S.kbTab==='市内交通') h+=tabLocalTransit(to);
+
+  $('kbBody').innerHTML=h;
+}
+
+
+/* 攻略库详情 */
+function openKb(kind,id){
+  var T={poi:['pois','poi_id'],food:['foods','food_id'],
+         route:['routes','route_id'],dest:['dests','dest_id']}[kind];
+  if(!T)return;
+  var r=null;
+  (DATA[T[0]]||[]).forEach(function(x){if(x[T[1]]===id)r=x;});
+  if(!r)return;
+
+  function row(k,v){
+    return v==null||v===''||v==='—'?'':
+      '<div style="display:flex;gap:10px;padding:7px 0;border-top:1px solid var(--c-sep);'+
+      'font-size:13px"><div style="flex:0 0 76px;color:var(--c-text-3)">'+k+
+      '</div><div style="flex:1">'+v+'</div></div>';
+  }
+  var h='<div class="handle"></div>',rows='';
+
+  if(kind==='poi'){
+    h+='<h3>'+esc(r.name)+'</h3><div class="sub">'+esc(r.city)+' · '+
+       esc(r.poi_type||'')+' · '+esc(r.hot_type||'')+
+       (r.official_level&&r.official_level!=='无'?' · '+esc(r.official_level):'')+'</div>';
+    rows+=row('为什么去',esc(r.why_worth));
+    rows+=row('为何算'+r.hot_type,esc(r.hot_note));
+    rows+=row('建议停留',mins(r.stay_minutes));
+    rows+=row('开放',[r.open_time,r.close_time].filter(Boolean).join(' - ')+
+      (r.closed_day?'　'+esc(r.closed_day)+'闭馆':'')+
+      (r.last_entry?'　'+esc(r.last_entry)+'停止入场':''));
+    rows+=row('门票',r.ticket_price===0?'免费':
+      (r.ticket_price>0?'¥'+r.ticket_price:'待核实'));
+    if(r.booking_rule_id){
+      var br=null;
+      rules().forEach(function(x){if(x.rule_id===r.booking_rule_id)br=x;});
+      rows+=row('需预约','是　'+(br?esc(br.platform_name||''):'')+
+        '<br><span style="color:var(--c-primary)">到「倒计时」页可算开票时间</span>');
+    }
+    rows+=row('出片',r.photo_score?(r.photo_score+' / 100'):'');
+    rows+=row('最佳光线',esc(r.best_light));
+    rows+=row('机位',esc(r.shoot_tip));
+    rows+=row('人流高峰',esc(r.crowd_peak));
+    rows+=row('体力',[r.walk_km?('步行 '+r.walk_km+'km'):'',
+      r.climb_m?('爬升 '+r.climb_m+'m'):''].filter(Boolean).join('　'));
+    rows+=row('适合',[r.suit_elderly===1?'老人可':'老人吃力',
+      r.suit_kids===1?'带娃可':'不宜带娃'].join('　'));
+    var tr=transitOf(r.poi_id);
+    if(tr.length) rows+=row('怎么去',tr.map(function(t){
+      return transitLine(t)+(t.note?'<br><span style="color:var(--c-text-3);'+
+        'font-size:12px">'+esc(t.note)+'</span>':'');}).join('<br>'));
+    rows+=row('避坑','<span style="color:#B45309">'+esc(r.avoid_tip||'—')+'</span>');
+
+  }else if(kind==='food'){
+    h+='<h3>'+esc(r.store_name&&r.store_name!=='—'?r.store_name:r.dish_name)+
+       '</h3><div class="sub">'+esc(r.city)+' · '+esc(r.dish_name)+' · '+
+       esc(r.list_source||'')+'</div>';
+    rows+=row('为什么吃',esc(r.why_worth));
+    rows+=row('人均',r.price_per_person>0
+      ?('¥'+r.price_per_person+'　<span style="color:var(--c-text-3)">'+
+        (r.price_confidence==='low'?'（估值，务必现场确认）':'')+'</span>')
+      :'待核实');
+    rows+=row('分店',esc(r.branch_note));
+    rows+=row('地址',esc(r.address));
+    rows+=row('排队',r.queue_level?stars(r.queue_level):'');
+    rows+=row('何时去',esc(r.best_time));
+    rows+=row('本地特色',r.is_local_only===1?'是':'否（连锁）');
+    rows+=row('避坑','<span style="color:#B45309">'+esc(r.avoid_tip||'—')+'</span>');
+
+  }else if(kind==='route'){
+    h+='<h3>'+esc(r.from_city)+' → '+esc(r.to_city)+'</h3><div class="sub">'+
+       esc(r.mode)+(r.train_type&&r.train_type!=='—'?' · '+esc(r.train_type)+'字头':'')+
+       '</div>';
+    rows+=row('乘坐时间','<b>'+mins(r.duration_min)+'</b>'+
+      '<br><span style="color:var(--c-text-3);font-size:12px">'+
+      '只算车上时间</span>');
+    rows+=row('票价',money(r.price_min,r.price_max)+
+      '　<span style="color:var(--c-text-3)">区间估值</span>');
+    rows+=row('站点',esc(r.station_from)+' → '+esc(r.station_to));
+    rows+=row('班次',esc(r.frequency));
+    rows+=row('换乘',esc(r.transfer_note));
+    rows+=row('订票',esc(r.book_channel)+(r.book_tip&&r.book_tip!=='—'
+      ?'<br>'+esc(r.book_tip):''));
+    rows+='<div class="poi-warn" style="margin-top:10px">'+
+      '不存具体车次号（调图会变）。出发前用 12306 / 高德查当日班次。</div>';
+
+  }else{
+    h+='<h3>'+esc(r.name)+'</h3><div class="sub">'+esc(r.province)+' · '+
+       esc(r.dest_type||'')+'</div>';
+    rows+=row('一句话',esc(r.one_liner));
+    rows+=row('建议天数',r.suggest_days_min+'-'+r.suggest_days_max+' 天（含往返）');
+    rows+=row('最佳月份',r.best_months?r.best_months.split(';').join(' / ')+' 月':'');
+    rows+=row('避开',r.avoid_months
+      ?('<span style="color:#B45309">'+r.avoid_months.split(';').join(' / ')+
+        ' 月 —— '+esc(r.avoid_reason||'')+'</span>'):'');
+    rows+=row('偏好分',[['出片',r.tag_photo],['美食',r.tag_food],
+      ['自然',r.tag_nature],['人文',r.tag_culture],['亲子',r.tag_kids],
+      ['躺平',r.tag_chill],['小众',r.tag_niche]]
+      .map(function(t){return t[0]+' '+(t[1]==null?'—':t[1]);}).join('　'));
+    rows+=row('消费档',r.consume_level?stars(r.consume_level):'');
+    rows+=row('拥挤度','假日 '+stars(r.crowd_holiday)+'　平日 '+stars(r.crowd_weekday));
+    rows+=row('海拔',r.altitude_m!=null?(r.altitude_m+' m'+
+      (r.altitude_m>=3000?'　<span style="color:#B45309">高海拔，带老人小孩需注意</span>':'')):'');
+    var np=(DATA.pois||[]).filter(function(p){return p.dest_id===r.dest_id;}).length;
+    var nf=(DATA.foods||[]).filter(function(p){return p.dest_id===r.dest_id;}).length;
+    rows+=row('已入库',np+' 个景点　'+nf+' 条美食');
+  }
+
+  h+=rows;
+  if(r.verified!==1){
+    h+='<div class="poi-warn" style="margin-top:12px">这条数据未经核实（'+
+       esc(r.src_confidence||'?')+' 置信）。'+
+       (r.note?esc(r.note):'出行前请对一遍官方渠道。')+'</div>';
+  }
+  h+='<div class="btn-row" style="margin-top:14px">'+
+     '<button class="btn ghost" id="k_close">关闭</button></div>';
+  $('sheet').innerHTML=h;
+  $('ov').classList.add('on');
+  $('sheet').scrollTop=0;
+  $('k_close').onclick=closeSheet;
+}
+
+/* ================= 渲染：待核实 ================= */
+function todoList(){
+  return rules().filter(function(r){return r.need_booking===1&&r.verified!==1;})
+    .sort(function(a,b){
+      return (b.difficulty||0)-(a.difficulty||0)||gapScore(b)-gapScore(a)||
+             a.rule_id.localeCompare(b.rule_id);
+    });
+}
+function renderVf(){
+  var list=todoList(),n=list.length;
+  $('vfCnt').textContent=n;
+  $('vfCnt').style.display=n?'flex':'none';
+  $('vfNote').innerHTML='待核实 <b>'+n+'</b> 条，按「难度降序 + 信息缺口降序」排。'+
+    '<b>先查前 8 条</b> —— 它们是 5 星难度且提前天数未知的，决定了倒计时有没有用。';
+  if(!n){
+    $('vfList').innerHTML='<div class="empty">全部核实完毕 🎉</div>';return;
+  }
+  $('vfList').innerHTML=list.map(function(r,i){
+    var g=gaps(r);
+    return '<div class="lib" data-id="'+r.rule_id+'">'+
+      '<div style="width:22px;flex-shrink:0;text-align:center;font-family:var(--font-mono);'+
+      'font-size:13px;color:'+(i<8?'var(--st-missed)':'var(--c-text-3)')+';font-weight:600">'+
+      (i+1)+'</div>'+
+      '<div class="lib-b"><div class="lib-n">'+esc(r.poi_name)+'</div>'+
+      '<div class="lib-s">'+esc(r.city)+' · '+esc(r.platform_name||'渠道未知')+
+      ' · 缺 '+esc(g.join('、')||'仅需复核')+'</div></div>'+
+      '<div class="lib-r"><div class="stars">'+stars(r.difficulty)+'</div></div></div>';
+  }).join('');
+}
+
+/* ================= 编辑 sheet ================= */
+function openSheet(id){
+  var r=null,base=null;
+  rules().forEach(function(x){if(x.rule_id===id)r=x;});
+  DATA.rules.forEach(function(x){if(x.rule_id===id)base=x;});
+  if(!r)return;
+
+  var modes=[['fixed_time','定点放票（错过就没了）'],
+             ['rolling','窗口内随时可约'],
+             ['onsite','现场取号']];
+  var h='<div class="handle"></div>'+
+    '<h3>'+esc(r.poi_name)+'</h3>'+
+    '<div class="sub">'+esc(r.city)+' · '+esc(r.category||'')+
+    ' · '+esc(r.platform_name||'渠道未知')+
+    (r.platform_url?' · <a href="'+esc(r.platform_url)+'" target="_blank" rel="noopener">打开官方页</a>':'')+
+    '</div>';
+
+  if(r.need_booking===0){
+    h+='<div class="note">这条是「无需预约」的对照样本：'+esc(r.peak_note||'')+'</div>';
+  }
+
+  h+='<div class="grid2">'+
+    '<div class="fld"><span class="lbl">提前天数（-1 = 未知）</span>'+
+    '<input type="number" id="f_adv" value="'+(r.advance_days==null?-1:r.advance_days)+'" /></div>'+
+    '<div class="fld"><span class="lbl">放票时刻</span>'+
+    '<input type="time" id="f_rt" value="'+(hhmm(r.release_time)?hhmm(r.release_time).txt:'')+'" /></div>'+
+    '</div>'+
+    '<div class="fld"><span class="lbl">放票模式</span><select id="f_mode">'+
+    modes.map(function(m){
+      return '<option value="'+m[0]+'"'+(r.release_mode===m[0]?' selected':'')+'>'+m[1]+'</option>';
+    }).join('')+'</select></div>'+
+    '<div class="fld"><span class="lbl">抢票难度</span><select id="f_diff">'+
+    [1,2,3,4,5].map(function(d){
+      var t=['不用抢','提前 1-2 天够','开票当天','开票即抢','秒杀级'][d-1];
+      return '<option value="'+d+'"'+(r.difficulty===d?' selected':'')+'>'+
+             stars(d)+'　'+t+'</option>';
+    }).join('')+'</select></div>'+
+    '<div class="fld"><span class="lbl">来源链接（核实时贴上）</span>'+
+    '<input type="url" id="f_src" value="'+esc(r.source_url||'')+'" placeholder="https://" /></div>'+
+    '<div class="fld"><span class="lbl">备注</span>'+
+    '<textarea id="f_note">'+esc(r.note||'')+'</textarea></div>'+
+    '<div class="sw"><div><div class="sw-l">已核实</div>'+
+    '<div class="sw-d">对过官方渠道后打开，倒计时才不再标警告</div></div>'+
+    '<div class="tg'+(r.verified===1?' on':'')+'" id="f_ok"></div></div>';
+
+  if(r.backup_poi||r.backup_plan){
+    h+='<div class="poi-alt" style="margin:12px 0">兜底：'+esc(r.backup_poi||'')+
+       (r.backup_poi&&r.backup_plan?'　':'')+esc(r.backup_plan||'')+'</div>';
+  }
+  h+='<div class="btn-row" style="margin-top:6px">'+
+     '<button class="btn ghost" id="f_cancel">取消</button>'+
+     (OVR[id]?'<button class="btn ghost" id="f_revert">还原</button>':'')+
+     '<button class="btn" id="f_save">保存</button></div>';
+
+  $('sheet').innerHTML=h;
+  $('ov').classList.add('on');
+  $('sheet').scrollTop=0;
+
+  $('f_ok').onclick=function(){this.classList.toggle('on');};
+  $('f_cancel').onclick=closeSheet;
+  if($('f_revert')) $('f_revert').onclick=function(){
+    delete OVR[id];Store.set(OVR_KEY,OVR);closeSheet();rerender();
+    toast('已还原为基线规则');
+  };
+  $('f_save').onclick=function(){
+    var adv=parseInt($('f_adv').value,10); if(isNaN(adv))adv=-1;
+    var rt=$('f_rt').value||'-1';
+    var patch={
+      advance_days:adv,
+      release_time:rt,
+      release_mode:$('f_mode').value,
+      difficulty:parseInt($('f_diff').value,10),
+      source_url:$('f_src').value.trim(),
+      note:$('f_note').value.trim(),
+      verified:$('f_ok').classList.contains('on')?1:0
+    };
+    if(patch.verified===1) patch.last_check_date=today();
+    // 与基线相同的字段不入 override，保持修正集最小
+    var keep={};
+    Object.keys(patch).forEach(function(k){
+      var b=base?base[k]:null;
+      var bn=(b===null||b===undefined)?'':String(b);
+      if(String(patch[k])!==bn) keep[k]=patch[k];
+    });
+    if(Object.keys(keep).length) OVR[id]=keep; else delete OVR[id];
+    Store.set(OVR_KEY,OVR);
+    closeSheet();rerender();
+    toast(patch.verified===1?'已标记核实，倒计时按新规则算':'已保存到本机');
+  };
+}
+function closeSheet(){$('ov').classList.remove('on');}
+
+/* ================= ICS ================= */
+function icsEsc(s){
+  return String(s).replace(/\\/g,'\\\\').replace(/;/g,'\\;')
+    .replace(/,/g,'\\,').replace(/\n/g,'\\n');
+}
+function fold(line){
+  // RFC5545：按 UTF-8 字节 75 上限折行，续行前置一个空格
+  if(bytes(line)<=75) return line;
+  var out=[],cur='';
+  for(var i=0;i<line.length;i++){
+    var ch=line.charAt(i), lim=out.length?74:75;
+    if(bytes(cur+ch)>lim){out.push(cur);cur=ch;}else{cur+=ch;}
+  }
+  out.push(cur);
+  return out.join('\r\n ');
+}
+function bytes(s){return unescape(encodeURIComponent(s)).length;}
+function stamp(d){
+  return d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'T'+
+         pad(d.getHours())+pad(d.getMinutes())+pad(d.getSeconds());
+}
+function buildIcs(){
+  var now=nowRef(),L=['BEGIN:VCALENDAR','VERSION:2.0',
+    'PRODID:-//xingqian-bibao//booking-countdown//CN','CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH','X-WR-CALNAME:'+icsEsc('抢票提醒 '+S.date)],n=0;
+
+  pick().forEach(function(r){
+    var v=judge(r,S.date,now);
+    if((v.st!=='WAITING'&&v.st!=='ACTION_TODAY')||!v.openDate) return;
+    n++;
+    var t=v.openTime||{h:9,m:0};
+    var start=parseYmd(v.openDate);
+    start.setHours(t.h,t.m,0,0);
+    start.setMinutes(start.getMinutes()-10);      // 提前 10 分钟开始
+    var end=new Date(start.getTime()+20*60000);
+    var parts=['游览日 '+S.date,'渠道 '+(r.platform_name||'待核实')];
+    if(r.difficulty) parts.push('难度 '+stars(r.difficulty));
+    if(r.need_id_card===1) parts.push('需身份证号');
+    if(r.need_companion_id===1) parts.push('需同行人实名');
+    if(r.backup_poi) parts.push('备用 '+r.backup_poi);
+    if(r.verified!==1) parts.push('规则未核实，请对官方渠道');
+    L.push('BEGIN:VEVENT',
+      'UID:'+r.rule_id+'-'+S.date.replace(/-/g,'')+'@xqbb',
+      'DTSTAMP:'+stamp(now),
+      'DTSTART:'+stamp(start),
+      'DTEND:'+stamp(end),
+      fold('SUMMARY:'+icsEsc('抢票 '+r.poi_name+'（'+md(S.date)+' 游览）')),
+      fold('DESCRIPTION:'+icsEsc(parts.join(' / '))));
+    if(r.platform_url) L.push(fold('URL:'+r.platform_url));
+    L.push('BEGIN:VALARM','TRIGGER:-PT10M','ACTION:DISPLAY',
+      'DESCRIPTION:'+icsEsc(r.poi_name+' 即将放票'),
+      'END:VALARM','END:VEVENT');
+  });
+  L.push('END:VCALENDAR');
+  return {text:L.join('\r\n')+'\r\n',n:n};
+}
+function exportIcs(){
+  var o=buildIcs();
+  if(!o.n){toast('当前没有「等待开票 / 今天开抢」的地点');return;}
+  var name='抢票提醒-'+S.date+'.ics';
+  try{
+    var blob=new Blob([o.text],{type:'text/calendar;charset=utf-8'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url;a.download=name;a.rel='noopener';
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(function(){URL.revokeObjectURL(url);},8000);
+    toast('已导出 '+o.n+' 条提醒');
+  }catch(e){toast('导出失败，请用下方复制');}
+  showIcsFallback(o.text,o.n);
+}
+function showIcsFallback(text,n){
+  $('sheet').innerHTML='<div class="handle"></div><h3>已生成 '+n+' 条开票提醒</h3>'+
+    '<div class="sub">若手机没有自动打开日历，复制下面内容，存成 .ics 文件再打开；'+
+    '或按提醒时间手动建日程。</div>'+
+    '<textarea id="icsTxt" style="min-height:160px;font-family:var(--font-mono);font-size:11px">'+
+    esc(text)+'</textarea>'+
+    '<div class="btn-row" style="margin-top:12px">'+
+    '<button class="btn ghost" id="i_close">关闭</button>'+
+    '<button class="btn" id="i_copy">复制内容</button></div>';
+  $('ov').classList.add('on');
+  $('i_close').onclick=closeSheet;
+  $('i_copy').onclick=function(){copy(text,'已复制日历内容');};
+}
+function copy(text,msg){
+  var ta=$('icsTxt')||$('csvTxt');
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){toast(msg);},fallback);
+  }else fallback();
+  function fallback(){
+    if(ta){ta.focus();ta.select();
+      try{document.execCommand('copy');toast(msg);}
+      catch(e){toast('请长按文本框手动复制');}
+    }else toast('请长按文本框手动复制');
+  }
+}
+
+/* ================= 导出修正 CSV ================= */
+function exportCsv(){
+  var ids=Object.keys(OVR);
+  if(!ids.length){toast('本机还没有任何修正');return;}
+  var cols=DATA.rules.length?Object.keys(DATA.rules[0]):[];
+  var all=rules(), rows=[cols.join(',')];
+  ids.forEach(function(id){
+    all.forEach(function(r){
+      if(r.rule_id!==id)return;
+      rows.push(cols.map(function(c){
+        var v=r[c];
+        if(v===null||v===undefined)return '';
+        v=String(v);
+        return /[",\n]/.test(v)?('"'+v.replace(/"/g,'""')+'"'):v;
+      }).join(','));
+    });
+  });
+  var text=rows.join('\n')+'\n';
+  $('sheet').innerHTML='<div class="handle"></div><h3>'+ids.length+' 条修正</h3>'+
+    '<div class="sub">复制后拷回电脑，按 rule_id 覆盖 data/booking_rules.csv 里的对应行，'+
+    '再跑 <code>python scripts/build_web.py</code> 即成为新基线。</div>'+
+    '<textarea id="csvTxt" style="min-height:180px;font-family:var(--font-mono);font-size:11px">'+
+    esc(text)+'</textarea>'+
+    '<div class="btn-row" style="margin-top:12px">'+
+    '<button class="btn ghost" id="c_close">关闭</button>'+
+    '<button class="btn" id="c_copy">复制 CSV</button></div>';
+  $('ov').classList.add('on');
+  $('c_close').onclick=closeSheet;
+  $('c_copy').onclick=function(){copy(text,'已复制 '+ids.length+' 条修正');};
+}
+
+/* ================= 绑定 ================= */
+function chipsHtml(items,active){
+  return items.map(function(c){
+    return '<div class="chip'+(c===active?' on':'')+'" data-c="'+esc(c)+'">'+esc(c)+'</div>';
+  }).join('');
+}
+function rerender(){
+  if(S.view==='cd')renderCd();
+  else if(S.view==='kb')renderKb();
+  else if(S.view==='lib')renderLib();
+  else renderVf();
+  $('vfCnt').textContent=todoList().length;
+}
+
+function init(){
+  // 快捷日期
+  var t=today();
+  var qs=[['今天',t],['明天',addDays(t,1)],['下周六',nextSat()],['国庆首日',defaultDate()]];
+  $('quick').innerHTML=qs.map(function(q){
+    return '<div class="chip" data-d="'+q[1]+'">'+q[0]+'</div>';
+  }).join('');
+  $('quick').addEventListener('click',function(e){
+    var el=e.target.closest('[data-d]');if(!el)return;
+    S.date=el.getAttribute('data-d');Store.set('date',S.date);renderCd();
+  });
+
+  // 城市
+  var cs=['全部'].concat(DATA.cities||[]);
+  $('cityChips').innerHTML=chipsHtml(cs,S.city);
+  $('cityChips').addEventListener('click',function(e){
+    var el=e.target.closest('[data-c]');if(!el)return;
+    S.city=el.getAttribute('data-c');S.q='';$('q').value='';
+    Store.set('city',S.city);
+    $('cityChips').innerHTML=chipsHtml(cs,S.city);
+    renderCd();
+  });
+  $('libChips').innerHTML=chipsHtml(['全部','待核实'].concat(DATA.cities||[]),S.libCity);
+  $('libChips').addEventListener('click',function(e){
+    var el=e.target.closest('[data-c]');if(!el)return;
+    S.libCity=el.getAttribute('data-c');
+    $('libChips').innerHTML=chipsHtml(['全部','待核实'].concat(DATA.cities||[]),S.libCity);
+    renderLib();
+  });
+
+  $('dt').addEventListener('change',function(){
+    if(!this.value)return;
+    S.date=this.value;Store.set('date',S.date);renderCd();
+  });
+  $('q').addEventListener('input',function(){S.q=this.value;renderCd();});
+  $('q2').addEventListener('input',function(){S.q2=this.value;renderLib();});
+
+  // 卡片点击 -> 编辑
+  ['cdList','libList','vfList'].forEach(function(id){
+    $(id).addEventListener('click',function(e){
+      var el=e.target.closest('[data-id]');
+      if(el&&!e.target.closest('a')) openSheet(el.getAttribute('data-id'));
+    });
+  });
+
+  // 攻略：出发地 + 目的地两个下拉，其余内容跟着变
+  var froms={};
+  (DATA.routes||[]).forEach(function(r){froms[r.from_city]=1;});
+  DATA.froms=Object.keys(froms).sort();
+  if(DATA.froms.indexOf(S.kbFrom)<0) S.kbFrom=DATA.froms[0]||'';
+
+  function toOptions(from){
+    var seen={},list=[];
+    (DATA.routes||[]).forEach(function(r){
+      if(r.from_city!==from||seen[r.to_city])return;
+      seen[r.to_city]=1;
+      list.push({v:r.to_city,t:r.to_city,min:tripMin(r)});
+    });
+    // 同一目的地取最快那条来排序
+    list.forEach(function(o){
+      (DATA.routes||[]).forEach(function(r){
+        if(r.from_city===from&&r.to_city===o.v&&tripMin(r)<o.min) o.min=tripMin(r);
+      });
+    });
+    list.sort(function(a,b){return a.min-b.min;});
+    var out=[{v:'',t:'先看能去哪（'+list.length+' 个）'}];
+    if(poisOf(from).length||foodsOf(from).length)
+      out.push({v:from,t:from+' 本地游（不用交通）'});
+    list.forEach(function(o){out.push({v:o.v,t:o.t+'　'+mins(o.min)});});
+    return out;
+  }
+  function paintPickers(){
+    $('selFrom').innerHTML=DATA.froms.map(function(c){
+      return '<option value="'+esc(c)+'"'+(c===S.kbFrom?' selected':'')+'>'+
+             esc(c)+'</option>';}).join('');
+    $('selTo').innerHTML=toOptions(S.kbFrom).map(function(o){
+      return '<option value="'+esc(o.v)+'"'+(o.v===S.kbTo?' selected':'')+'>'+
+             esc(o.t)+'</option>';}).join('');
+  }
+  paintPickers();
+  $('selFrom').addEventListener('change',function(){
+    S.kbFrom=this.value;S.kbTo='';S.kbMode='全部';
+    Store.set('kbfrom',S.kbFrom);Store.set('kbto','');
+    paintPickers();renderKb();$('body').scrollTop=0;
+  });
+  $('selTo').addEventListener('change',function(){
+    S.kbTo=this.value;S.kbMode='全部';S.kbTab='攻略';S.kbDays=null;
+    Store.set('kbto',S.kbTo);
+    renderKb();$('body').scrollTop=0;
+  });
+  $('kbBody').addEventListener('click',function(e){
+    var d=e.target.closest('[data-to]');
+    if(d){
+      S.kbTo=d.getAttribute('data-to');S.kbMode='全部';
+      S.kbTab='攻略';S.kbDays=null;
+      Store.set('kbto',S.kbTo);paintPickers();renderKb();
+      $('body').scrollTop=0;return;
+    }
+    var tb=e.target.closest('[data-t]');
+    if(tb){S.kbTab=tb.getAttribute('data-t');renderKb();
+           $('body').scrollTop=0;return;}
+    var pk=e.target.closest('[data-pick]');
+    if(pk){
+      var v=pk.getAttribute('data-pick').split(':');
+      togglePick(S.kbTo,v[0],v[1]);renderKb();return;
+    }
+    var dy=e.target.closest('[data-day]');
+    if(dy){S.kbDays=parseInt(dy.getAttribute('data-day'),10);renderKb();return;}
+    if(e.target.id==='pickClear'){
+      delete PICK[S.kbTo||'_'];Store.set('pick',PICK);renderKb();
+      toast('已清空选择，改回自动排');return;
+    }
+    var m=e.target.closest('[data-m]');
+    if(m){S.kbMode=m.getAttribute('data-m');renderKb();return;}
+    var el=e.target.closest('[data-kb]');
+    if(el) openKb(el.getAttribute('data-kb'),el.getAttribute('data-id'));
+  });
+
+  $('btnIcs').onclick=exportIcs;
+  $('btnExport').onclick=exportCsv;
+  $('btnReset').onclick=function(){
+    var n=Object.keys(OVR).length;
+    if(!n){toast('本机没有修正可清');return;}
+    if(!confirm('清空本机 '+n+' 条修正？基线规则不受影响。'))return;
+    OVR={};Store.set(OVR_KEY,OVR);rerender();toast('已清空');
+  };
+
+  $('ov').addEventListener('click',function(e){if(e.target===this)closeSheet();});
+
+  // tabs
+  var TITLE={cd:['行前必办','规划期就把抢票时间轴对齐 —— 别到了才发现票早放完了'],
+             kb:['攻略','选出发地和目的地 · 勾选想去的 · 自动排出每日行程'],
+             lib:['规则库','共 '+(DATA.count||0)+' 条预约规则 · 数据日期 '+(DATA.built_at||'')],
+             vf:['待核实','规则编错比不给更糟，所以未核实的一律显示「规则未知」']};
+  function switchView(v){
+    if(!TITLE[v])v='cd';
+    S.view=v;
+    [].forEach.call($('tabs').querySelectorAll('.tab'),function(x){
+      x.classList.toggle('on',x.getAttribute('data-v')===v);
+    });
+    ['cd','kb','lib','vf'].forEach(function(k){
+      $('v-'+k).classList.toggle('on',k===v);
+    });
+    $('hdT').textContent=TITLE[v][0];
+    $('hdS').textContent=TITLE[v][1];
+    $('body').scrollTop=0;
+    rerender();
+  }
+  $('tabs').addEventListener('click',function(e){
+    var el=e.target.closest('[data-v]');if(!el)return;
+    switchView(el.getAttribute('data-v'));
+  });
+
+  // 预览模式的告知横幅：模拟时钟 / 演示规则都必须显式标出，免得当成真规则
+  var flags=[];
+  if(Q.get('now')) flags.push('时钟已模拟为 <b>'+esc(Q.get('now').replace('T',' '))+'</b>');
+  if(DEMO) flags.push('规则为<b>演示示意值</b>，非真实预约规则');
+  if(flags.length){
+    $('hdDemo').style.display='block';
+    $('hdDemo').innerHTML='预览模式 · '+flags.join('　·　');
+  }
+
+  if(S.view!=='cd') switchView(S.view); else rerender();
+
+  if(!DEMO && 'serviceWorker' in navigator){
+    navigator.serviceWorker.register('./sw.js').catch(function(){});
+  }
+}
+function nextSat(){
+  var d=nowRef(),n=(6-d.getDay()+7)%7||7;
+  return addDays(today(),n);
+}
+
+if(!DATA.rules.length){
+  document.getElementById('cdList').innerHTML=
+    '<div class="empty">data.js 没加载到<br>先跑 python scripts/build_web.py</div>';
+}else init();
+})();
+</script>
+</body>
+</html>

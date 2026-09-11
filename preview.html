@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>行前必办 · 产品评审预览</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  background:#f1f5f9;color:#1f2937;line-height:1.6;-webkit-font-smoothing:antialiased}
+.banner{background:linear-gradient(135deg,#1a365d 0%,#1d4ed8 50%,#3b82f6 100%);
+  color:#fff;padding:26px 32px}
+.banner h1{font-size:23px;font-weight:600;letter-spacing:.4px}
+.banner p{font-size:13px;opacity:.92;margin-top:5px}
+.wrap{max-width:1440px;margin:0 auto;padding:22px}
+.cols{display:flex;gap:22px;align-items:flex-start}
+.left{flex:0 0 auto;position:sticky;top:22px}
+.right{flex:1;min-width:0}
+@media(max-width:1080px){.cols{flex-direction:column}.left{position:static}}
+
+.card{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.05);
+  padding:20px 22px;margin-bottom:18px}
+h2{font-size:16px;color:#1e40af;font-weight:600;padding-bottom:9px;margin-bottom:15px;
+  border-bottom:2px solid #dbeafe;display:flex;align-items:center;
+  justify-content:space-between;gap:10px}
+h2 .n{font-size:12px;color:#64748b;font-weight:400}
+.note{background:#eff6ff;border-left:4px solid #3b82f6;border-radius:6px;
+  padding:11px 14px;font-size:13px;margin-bottom:16px}
+.warn{background:#fef2f2;border-left:4px solid #ef4444;border-radius:6px;
+  padding:11px 14px;font-size:13px;margin-bottom:16px}
+code{background:#f3f4f6;color:#1d4ed8;font-family:Consolas,Monaco,monospace;
+  font-size:12px;padding:1px 5px;border-radius:3px}
+
+/* ---------- phone ---------- */
+.phone{width:399px;background:#0f172a;border-radius:44px;padding:12px;
+  box-shadow:0 18px 44px rgba(15,23,42,.28)}
+.phone .screen{width:375px;height:762px;border-radius:32px;overflow:hidden;
+  background:#F4F7FA;position:relative}
+.phone iframe{width:375px;height:762px;border:0;display:block}
+.phone .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:132px;height:26px;background:#0f172a;border-radius:0 0 16px 16px;z-index:5;
+  pointer-events:none}
+.pbar{display:flex;gap:8px;margin-top:14px;justify-content:center}
+.pbar button{flex:1;padding:8px;border:1px solid #cbd5e1;background:#fff;border-radius:7px;
+  font-size:12px;color:#475569;cursor:pointer;font-family:inherit}
+.pbar button:hover{background:#f8fafc;border-color:#3b82f6;color:#1d4ed8}
+
+/* ---------- scenarios ---------- */
+.sc{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:9px}
+.sc button{text-align:left;padding:10px 12px;border:1.5px solid #e2e8f0;background:#fff;
+  border-radius:9px;cursor:pointer;font-family:inherit;transition:all .13s}
+.sc button:hover{border-color:#93c5fd;background:#f8fafc}
+.sc button.on{border-color:#1d4ed8;background:#eff6ff;box-shadow:0 0 0 3px rgba(29,78,216,.1)}
+.sc .t{font-size:13px;font-weight:600;color:#1f2937}
+.sc .d{font-size:11px;color:#64748b;margin-top:3px;line-height:1.45}
+.sc button.on .t{color:#1d4ed8}
+
+.expect{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px 14px;
+  font-size:12.5px;margin-top:14px}
+.expect b{color:#1e40af}
+.expect ul{margin:7px 0 0 17px}
+.expect li{margin-bottom:4px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.tag{font-size:11px;padding:2px 9px;border-radius:999px;color:#fff;font-weight:500}
+
+/* ---------- review list ---------- */
+.q{border:1px solid #e5e9ef;border-radius:9px;padding:13px 15px;margin-bottom:11px;
+  transition:border-color .13s}
+.q.done-change{border-color:#f59e0b;background:#fffbeb}
+.q.done-keep{border-color:#10b981;background:#f0fdf7}
+.q.done-hold{border-color:#94a3b8;background:#f8fafc}
+.q-h{display:flex;gap:9px;align-items:flex-start}
+.q-i{flex:0 0 22px;height:22px;border-radius:50%;background:#eff6ff;color:#1d4ed8;
+  font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  margin-top:1px}
+.q-t{font-size:14px;font-weight:600;flex:1}
+.q-b{font-size:12.5px;color:#4b5563;margin:7px 0 0 31px}
+.q-b .mine{color:#1e40af;font-weight:500}
+.q-o{display:flex;gap:7px;margin:10px 0 0 31px;flex-wrap:wrap}
+.q-o button{padding:5px 13px;border:1px solid #cbd5e1;background:#fff;border-radius:6px;
+  font-size:12px;cursor:pointer;color:#475569;font-family:inherit}
+.q-o button.on{color:#fff;border-color:transparent;font-weight:600}
+.q-o button.on[data-v=change]{background:#f59e0b}
+.q-o button.on[data-v=keep]{background:#10b981}
+.q-o button.on[data-v=hold]{background:#64748b}
+.q-n{margin:9px 0 0 31px}
+.q-n textarea{width:100%;min-height:42px;border:1px solid #e2e8f0;border-radius:6px;
+  padding:7px 9px;font-size:12.5px;font-family:inherit;resize:vertical;background:#fff}
+.q-n textarea:focus{outline:none;border-color:#3b82f6}
+
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{padding:10px 18px;border:none;border-radius:8px;font-size:13.5px;font-weight:600;
+  cursor:pointer;font-family:inherit;background:#1d4ed8;color:#fff}
+.btn:hover{background:#1a43b8}
+.btn.g{background:#f1f5f9;color:#475569}
+.btn.g:hover{background:#e6ebf1}
+.prog{font-size:12.5px;color:#64748b;margin-left:auto}
+.prog b{color:#1e40af;font-size:15px}
+#out{width:100%;min-height:220px;border:1px solid #e2e8f0;border-radius:8px;padding:12px;
+  font-family:Consolas,Monaco,monospace;font-size:11.5px;line-height:1.6;margin-top:14px;
+  display:none;background:#f8fafc}
+.toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);
+  background:rgba(15,23,42,.93);color:#fff;font-size:13px;padding:11px 22px;
+  border-radius:999px;z-index:900;opacity:0;transition:opacity .22s;pointer-events:none}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <h1>行前必办 · 产品评审预览</h1>
+  <p>知识库 739 条 · 72 个目的地 · 13 处景点美食 · 125 条路线 · 34 个住宿片区。左边手机框里跑的是真实实现（<code style="background:rgba(255,255,255,.2);color:#fff">index.html</code>），不是效果图。切场景直接点，界面能点能滑。</p>
+</div>
+
+<div class="wrap">
+  <div id="fileWarn"></div>
+
+  <div class="cols">
+    <!-- ============ 左：手机 ============ -->
+    <div class="left">
+      <div class="phone">
+        <div class="screen"><div class="notch"></div><iframe id="fr" title="预览"></iframe></div>
+      </div>
+      <div class="pbar">
+        <button id="btnReload">↻ 重载</button>
+        <button id="btnNew">↗ 新窗口打开</button>
+      </div>
+      <div style="font-size:11px;color:#64748b;text-align:center;margin-top:9px;line-height:1.5">
+        当前地址：<code id="curUrl" style="font-size:10px">—</code>
+      </div>
+    </div>
+
+    <!-- ============ 右：场景 + 评审 ============ -->
+    <div class="right">
+
+      <div class="card">
+        <h2>十三个场景 <span class="n">点一下切换，手机框立刻变</span></h2>
+        <div class="note">
+          场景 1-5 和 13 是<b>预约倒计时</b>模块，场景 6-12 是<b>攻略</b>模块
+          （739 条真实入库数据，不开演示数据）。<br>
+          预约规则 42 条里只有 2 条提前天数是有实据的，所以<b>倒计时的场景 2-5 开了演示数据</b>
+          （提前天数是我编的示意值，只为了让各种状态能显示出来）。
+          手机顶部会有「预览模式」横幅标明，不会和真规则混淆。
+        </div>
+        <div class="sc" id="scList"></div>
+        <div class="expect" id="expect"></div>
+      </div>
+
+      <div class="card">
+        <h2>我觉得可能要改的 19 处 <span class="n" id="qn"></span></h2>
+        <div class="note">
+          每条我都给了自己的倾向。你只要点<b>保留 / 要改 / 待定</b>，需要时写一句备注。
+          第 <b>15</b> 条（鼓浪屿该独占一天）是我自己最不满意的地方，第 <b>2</b> 条（产品名已经配不上内容）也想听你意见。最需要拍板的是<b>第 17 条（要不要接高德）</b>和<b>第 19 条（下一步做哪个）</b>。
+          选择存在浏览器本地，关了再开还在。
+        </div>
+        <div id="qList"></div>
+        <div class="bar" style="margin-top:16px">
+          <button class="btn" id="btnExport">导出评审意见</button>
+          <button class="btn g" id="btnClear">清空</button>
+          <span class="prog" id="prog"></span>
+        </div>
+        <textarea id="out" readonly></textarea>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+'use strict';
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+var tT;
+function toast(m){var t=$('toast');t.textContent=m;t.classList.add('on');
+  clearTimeout(tT);tT=setTimeout(function(){t.classList.remove('on');},2300);}
+
+/* file:// 下 iframe 同源和 localStorage 都不可靠，必须走 http */
+if(location.protocol==='file:'){
+  $('fileWarn').innerHTML='<div class="warn"><b>请用本地服务打开这个页面</b>，'+
+    '直接双击文件（file://）会导致演示数据注入失败、手机框空白。<br>'+
+    '在 <code>旅游攻略/</code> 目录执行 <code>python -m http.server 8777</code>，'+
+    '然后访问 <code>http://127.0.0.1:8777/preview.html</code></div>';
+}
+
+/* ================= 演示规则（示意值，仅用于让各状态可见） ================= */
+var DEMO_OVR={
+  BK001:{advance_days:7, release_time:'20:00', release_mode:'fixed_time', difficulty:4, verified:1},
+  BK002:{advance_days:7, release_time:'17:00', release_mode:'fixed_time', difficulty:5, verified:1},
+  BK003:{advance_days:5, release_time:'-1',    release_mode:'rolling',    difficulty:3, verified:1},
+  BK004:{advance_days:10,release_time:'-1',    release_mode:'rolling',    difficulty:3, verified:1},
+  BK005:{advance_days:7, release_time:'-1',    release_mode:'rolling',    difficulty:3, verified:1},
+  BK006:{advance_days:1, release_time:'12:00', release_mode:'fixed_time', difficulty:5, verified:1},
+  BK007:{advance_days:1, release_time:'12:00', release_mode:'fixed_time', difficulty:5, verified:1},
+  BK008:{advance_days:5, release_time:'09:00', release_mode:'fixed_time', difficulty:2, verified:1},
+  BK040:{advance_days:30,release_time:'-1',    release_mode:'rolling',    difficulty:2, verified:1},
+  BK009:{advance_days:30,release_time:'-1',    release_mode:'rolling',    difficulty:5, verified:1},
+  BK014:{advance_days:7, release_time:'19:00', release_mode:'fixed_time', difficulty:5, verified:1},
+  BK012:{advance_days:5, release_time:'18:00', release_mode:'fixed_time', difficulty:4, verified:1}
+};
+try{ localStorage.setItem('xqbb_demo_ovr', JSON.stringify(DEMO_OVR)); }catch(e){}
+
+var C={action:'#F59E0B',missed:'#EF4444',released:'#FB923C',open:'#10B981',
+       wait:'#0EA5E9',none:'#94A3B8'};
+function tag(t,c){return '<span class="tag" style="background:'+c+'">'+t+'</span>';}
+
+/* ================= 场景 ================= */
+var SC=[
+ {t:'1 · 真实数据现状',d:'不开演示数据，你现在部署出去就是这样',
+  q:'now=2026-09-10T15:00&date=2026-10-01&city=北京',
+  w:'这是<b>当前真实状态</b>：北京 9 处里只有故宫、国博能算倒计时，其余 7 处全是灰色「规则未知」。',
+  s:['<b>问题就在这</b>：满屏「规则未知」，产品看着像没做完',
+     '这也是为什么第 3 条评审项最重要'],
+  g:[['等待开票',C.wait],['规则未知',C.none]]},
+
+ {t:'2 · 核实完的样子',d:'12 条填好提前天数后的理想态',
+  q:'demo=1&now=2026-09-10T15:00&date=2026-10-01&city=北京',
+  w:'假设你把北京这几条都核实了。<b>这才是产品做完的样子</b>，也是要评审的主界面。',
+  s:['汇总条按状态给数，紧急的排最上面',
+     '每条都给了「几号几点开票、还有几天、要备什么」',
+     '底部出现「导出开票提醒到日历」'],
+  g:[['等待开票',C.wait],['现在可约',C.open]]},
+
+ {t:'3 · 开票当天傍晚',d:'19:00，故宫 20:00 放票',
+  q:'demo=1&now=2026-09-24T19:00&date=2026-10-01&city=北京',
+  w:'<b>最关键的一屏</b>。同时出现四种状态，看排序对不对、紧迫感够不够。',
+  s:['故宫 →「今天 20:00 开票，距现在 1.0 小时」，橙色置顶',
+     '国博 17:00 已放票 →「立刻去查余量，可蹲退票」',
+     '颐和园、天安门还在等；环球影城窗口早开了'],
+  g:[['今天开抢',C.action],['今天已放票',C.released],['现在可约',C.open],['等待开票',C.wait]]},
+
+ {t:'4 · 已经错过',d:'9/28 才想起来规划 10/1',
+  q:'demo=1&now=2026-09-28T10:00&date=2026-10-01&city=北京',
+  w:'<b>这是整个产品的立身之本</b> —— 别的 App 不会告诉你「你已经没戏了，换这个」。',
+  s:['故宫（4★）、国博（5★）→ 红色「已过放票日」+ 直接给替代（景山公园 / 首都博物馆）',
+     '<b>看难度分级</b>：同样错过，颐和园（2★）说的是「大概率仍有余票，直接去查」，'+
+       '不会一律劝退',
+     '<b>看放票模式的差别</b>：天安门和颐和园开票日都是 9/26，但天安门是滚动窗口 → '+
+       '绿色「现在可约」，颐和园是定点放票 → 红色「已过」'],
+  g:[['已过放票日',C.missed],['现在可约',C.open],['等待开票',C.wait]]},
+
+ {t:'5 · 全国范围',d:'不限城市，42 处一起看',
+  q:'demo=1&now=2026-09-10T15:00&date=2026-10-01&city=全部',
+  w:'看长列表的可读性 —— 分组多、条目多的时候还撑不撑得住。',
+  s:['一屏内 4 种状态并存（等待 / 可约 / 未知 / 无需预约），滚动看分组标题够不够清楚',
+     '大量「规则未知」堆在下半部分，观感如何'],
+  g:[['等待开票',C.wait],['现在可约',C.open],['规则未知',C.none]]},
+
+ {t:'6 · 能去哪',d:'邯郸出发，没选目的地',
+  q:'view=kb&kbfrom=邯郸&kbto=&now=2026-09-11T10:00',
+  w:'只选出发地时列出<b>从这儿能去的所有地方</b>，按车上时间排。'+
+    '点任意一条就等于选了目的地，直接展开五个 tab。',
+  s:['最上面是「邯郸 本地」入口 —— 本地游不用算往返交通',
+     '安阳殷墟车上只要 22 分钟，是邯郸周末游的最优解',
+     '标红的是这个月不该去的（本月 9 月，独库公路等会标出来）',
+     '<b>这一页最能看出三线城市的交通结构</b>：邯郸 21 条线路里 14 条要换乘'],
+  g:[['本地游',C.open],['按车上时间排',C.wait],['本月不建议',C.missed]]},
+
+ {t:'7 · 攻略·行程',d:'北京→厦门 4 天，DAY 分段',
+  q:'view=kb&kbfrom=北京&kbto=厦门&kbtab=攻略&kbdays=4&now=2026-09-11T10:00',
+  w:'<b>这是整个产品的核心输出。</b>按 DAY 1/2/3 排，每项带时段，'+
+    '含去程返程、饭点、转场，底下汇总人均花费。全是规则算的，没用大模型。',
+  s:['时段由「建议停留时长 + 开放时间 + 景点间距离」排出',
+     '鼓浪屿带 <b>🎫 需提前预约：厦门轮渡有限公司</b> —— 船票是真瓶颈',
+     '超过 35 分钟的转场标「较远」，提示可以挪到顺路那天',
+     '最后一天景点排完后给「自由安排」占位，不留空白',
+     '上面可以改天数（1-7 天），改完立刻重排'],
+  g:[['DAY 分段',C.wait],['需预约',C.missed],['自由安排',C.none]]},
+
+ {t:'8 · 攻略·路线',d:'邯郸→上海，高铁 vs 夜车',
+  q:'view=kb&kbfrom=邯郸&kbto=上海&kbtab=路线&now=2026-09-11T10:00',
+  w:'<b>只显示车上时间</b>，去车站/安检/进市区全部不显示 —— '+
+    '那几段取决于你住哪，库里估不准就不写。',
+  s:['高铁车上 6h30 ¥560 但<b>要在郑州或徐州换乘</b>',
+     '普速夜车硬卧 ¥250 直达，<b>还省一晚酒店</b> —— 这条对比是库的价值所在',
+     '下面「到站后怎么去」给到达站到各景点的地铁/打车方案',
+     '上面的 chips 可以只看高铁动车 / 普速火车 / 飞机'],
+  g:[['车上时间',C.wait],['夜车',C.open],['需换乘',C.missed]]},
+
+ {t:'9 · 攻略·景点',d:'厦门 16 处，可勾选',
+  q:'view=kb&kbfrom=北京&kbto=厦门&kbtab=景点&now=2026-09-11T10:00',
+  w:'网红 / 小众 / 经典三分组。<b>点左边圆圈勾选想去的</b>，'+
+    '回「攻略」tab 会只按你选的重排 —— 纯前端，勾完毫秒级出结果。',
+  s:['小众组收了真没人去但东西好的：鸿山公园免费俯瞰全岛、'+
+     '五通灯塔能拍飞机贴海进场、华新路老别墅区',
+     '鼓浪屿标了「瓶颈是船票不是门票」',
+     '每条带停留时长、门票、出片指数、地铁接驳、避坑',
+     '<b>试试勾三四个再切回攻略 tab</b>'],
+  g:[['网红',C.action],['小众',C.open],['经典',C.wait],['可勾选',C.released]]},
+
+ {t:'10 · 攻略·美食',d:'厦门 12 条，带数据来源',
+  q:'view=kb&kbfrom=北京&kbto=厦门&kbtab=美食&now=2026-09-11T10:00',
+  w:'按榜单来源分组。<b>店名都是真的，人均全是估值，评分一律留空。</b>',
+  s:['中华老字号 4 条可在商务部名录查证；地标老店 5 条是长期口碑判断',
+     '避坑是最值钱的：八市买海鲜<b>要先谈加工费并看秤</b>、'+
+     '鼓浪屿龙头路那些网红奶茶是营销产物',
+     '<b>没有评分列</b> —— 点评评分抓不到，不编。'+
+     '能合法拿的是高德 POI、米其林官网、黑珍珠官网',
+     '导出的 HTML 里有完整的「数据来源对照表」'],
+  g:[['中华老字号',C.open],['地标老店',C.wait],['无评分',C.none]]},
+
+ {t:'11 · 攻略·住宿',d:'厦门 5 个片区',
+  q:'view=kb&kbfrom=北京&kbto=厦门&kbtab=住宿&now=2026-09-11T10:00',
+  w:'做成<b>片区级不是单个酒店</b> —— 住错片区每天多花两小时通勤，'+
+    '这比订哪家重要得多。',
+  s:['每条给经济/舒适/高档三档区间 + 旺季系数',
+     '<b>厦门北站那条写了「不要以为厦门北站在市区」</b>（在集美，进岛 50 分钟）',
+     '鼓浪屿岛上能看到没游客的清早，但行李要自己拖着走石板路',
+     '实时房价拿不到（携程系需企业资质），只给区间估值'],
+  g:[['核心景区',C.open],['商业中心',C.wait],['交通枢纽',C.none]]},
+
+ {t:'12 · 本地游',d:'南京→南京，市内交通',
+  q:'view=kb&kbfrom=南京&kbto=南京&kbtab=市内交通&now=2026-09-11T10:00',
+  w:'出发地等于目的地时<b>不算往返交通</b>，tab 换成「市内交通」。'+
+    '南京→南京的路线当然不该是先去无锡 —— 这是你指出来的。',
+  s:['按实际出现的方式动态分组（地铁/公交/打车/轮渡都不会丢）',
+     '重点提示「别一天里横跨全城」',
+     '切到「攻略」tab 看本地一天怎么排'],
+  g:[['市内交通',C.wait],['不算往返',C.open]]},
+
+ {t:'13 · 待核实清单',q_tab:'vf',d:'第四个页签，人工排期用',
+  q:'now=2026-09-11T10:00&date=2026-10-01&city=北京',
+  w:'切到<b>底部第四个页签「待核实」</b>看这屏。这是给你自己干活用的。',
+  s:['按「难度降序 + 信息缺口降序」排，前 8 条序号标红',
+     '点任意一条打开编辑弹窗，填完可导出修正 CSV',
+     '红色角标显示还剩多少条没核实'],
+  g:[['待核实 40',C.missed]]}
+];
+
+var cur=0;
+function renderSc(){
+  $('scList').innerHTML=SC.map(function(s,i){
+    return '<button data-i="'+i+'" class="'+(i===cur?'on':'')+'">'+
+      '<div class="t">'+s.t+'</div><div class="d">'+esc(s.d)+'</div></button>';
+  }).join('');
+  var s=SC[cur];
+  $('expect').innerHTML='<b>这屏在看什么</b><div style="margin-top:5px">'+s.w+'</div>'+
+    '<ul>'+s.s.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>'+
+    '<div class="tags">'+s.g.map(function(g){return tag(g[0],g[1]);}).join('')+'</div>';
+  var url='./index.html?'+s.q;
+  $('fr').src=url;
+  $('curUrl').textContent=url;
+}
+$('scList').addEventListener('click',function(e){
+  var b=e.target.closest('[data-i]');if(!b)return;
+  cur=+b.getAttribute('data-i');renderSc();
+});
+$('btnReload').onclick=function(){$('fr').src=$('fr').src;};
+$('btnNew').onclick=function(){window.open($('fr').src,'_blank');};
+
+/* ================= 评审清单 ================= */
+var QS=[
+ {t:'满屏「规则未知」怎么办',
+  b:'倒计时页 38 条没核实的规则会占掉大半屏（见场景 1）。',
+  mine:'我倾向：首页默认<b>折叠</b>未核实项，收成一行「另有 7 处规则待核实 ›」，'+
+       '点开才展开。待核实的活儿留在第四个页签做。'},
+ {t:'产品叫什么',
+  b:'现在叫「行前必办」，主屏图标也是这个名字。但现在它已经不只是抢票了 —— '+
+    '攻略、路线、住宿、美食都有。',
+  mine:'原来的名字现在<b>配不上内容了</b>。建议改成「行前」「路上」或「旅前」'+
+       '这类更宽的名字；「行前必办」可以留给倒计时那个页签。'},
+ {t:'难度用 5 颗星合适吗',
+  b:'抢票难度 5 星 = 秒杀级，1 星 = 不用抢。排队程度也用星。',
+  mine:'我担心星星越多视觉上像"越推荐"，容易误读。建议换成 🔥 或直接标文字'+
+       '「秒杀 / 开票即抢 / 宽松」。'},
+ {t:'「已过放票日」该排第二吗',
+  b:'倒计时排序：今天开抢 → 已错过 → 今天已放票 → 现在可约 → 等待 → 未知。',
+  mine:'纠结。已错过其实无法行动，按理该沉底；但它是最需要被看见的坏消息。'+
+       '倾向保留在上面但改成可折叠。'},
+ {t:'倒计时页默认日期',
+  b:'默认下一个国庆首日；快捷键有今天 / 明天 / 下周六 / 国庆首日。',
+  mine:'倾向改成「下个周末」更日常，国庆只在 9 月才默认。'},
+ {t:'勾选够不够，要不要真正的「我的行程」',
+  b:'现在可以在景点/美食页勾选，攻略按勾选重排，勾选存本地。'+
+    '但换了目的地就是另一套勾选，没有"保存这次行程"的概念。',
+  mine:'建议加一层：把「出发地+目的地+天数+勾选」存成一个命名行程，'+
+       '下次打开直接恢复。这是从工具变成 App 的关键一步。'},
+ {t:'导出日历只导开票时刻，够吗',
+  b:'倒计时页只为「等待开票 / 今天开抢」生成事件，各提前 10 分钟响铃。',
+  mine:'建议再加一条游览日当天的全天日程，把证件、预约码、备用方案写进备注。'+
+       '更进一步是把整条行程（DAY 1/2/3）导成日历。'},
+ {t:'公开链接谁都能改数据',
+  b:'GitHub Pages 是公开的，任何人打开都能勾选、改规则（只存他自己浏览器）。',
+  mine:'倾向不管 —— 改动纯本地，没有服务端。但分享给别人时可能需要'+
+       '一个只读开关，避免别人以为改了能同步。'},
+ {t:'未核实的警告是否太吵',
+  b:'倒计时页每条未核实的都带一行黄底「规则未核实（mid 置信）点开可填」。'+
+    '攻略页的景点美食也有类似标注。',
+  mine:'纠结。这是诚实必需的，但一屏七八条黄条很吵。'+
+       '可能压缩成一个小角标 + 顶部汇总一句。'},
+ {t:'美食人均是估值，够不够显眼',
+  b:'列表页显示「人均约 ¥60」，详情页写「估值，务必现场确认」。',
+  mine:'加了「约」字之后我觉得可以了。<b>这条主要想确认你认不认</b> —— '+
+       '如果还嫌不明显，可以把数字改成灰色或加问号角标。'},
+ {t:'坐标是估值，要不要先校正再铺量',
+  b:'106 个景点的经纬度是我给的估值，精度约几百米。'+
+    '够做分天聚类和转场估算，不够导航。',
+  mine:'<b>建议接高德 Place API 批量校正</b>。不然错误会随铺量放大，'+
+       '以后返工更贵。同一个 Key 还能顺便拉餐厅 POI 解决美食太少的问题。'},
+ {t:'覆盖深浅是否合适',
+  b:'13 处有景点+美食（厦门 16 最多），72 个目的地里 59 个只有骨架。'+
+    '<b>新疆、川西</b>只有季节窗口没有景点美食。',
+  mine:'邯郸本地和湖南（长沙/张家界/凤凰）已经补完。'+
+       '建议下一批做<b>川西 → 新疆</b>，这两块的季节窗口已经是全库最有价值的部分，'+
+       '但缺具体景点。'},
+ {t:'三线城市的推荐半径要不要单独处理',
+  b:'邯郸 21 条路线 14 条需换乘，远程必须到郑州或北京转机。'+
+    '同样问"3 天能去哪"，从邯郸和从上海出发差别巨大。',
+  mine:'<b>建议按出发地的枢纽等级调整半径</b>，而不是统一用小时数。'+
+       '三线城市要把"到枢纽的时间"算进往返成本。'},
+ {t:'目的地的七个偏好分是主观的',
+  b:'出片/美食/自然/人文/亲子/躺平/小众各 0-100 分，全是我的主观评估。',
+  mine:'纠结。主观分能直接算匹配度，但没法解释"为什么成都美食是 98 分"。'+
+       '折中是保留分值但明确写「主观评估」，不伪装成统计数据。'},
+ {t:'鼓浪屿这类景点该独占一天，算法不懂',
+  b:'场景 7 里鼓浪屿被排在 DAY 1 下午（落地当天），占 5 小时。'+
+    '逻辑没错（出片 90 最高优先），但刚落地就上岛不现实 —— 船票、行李、体力都是问题。',
+  mine:'<b>这是我自己最不满意的一处。</b>建议给景点加一个「是否该独占一天」'+
+       '的标记，独占的排在第二天起。'},
+ {t:'离车站近的景点该顺路排',
+  b:'五通灯塔公园其实就在高崎机场旁边，最合理是返程当天顺路去，'+
+    '但算法把它排在 DAY 3 专程打车往返 51 分钟。',
+  mine:'要修得给 routes 的站点加坐标，让最后一天优先选离出发站近的景点。'+
+       '工作量不大但要先补站点坐标。'},
+ {t:'要不要接高德 API',
+  b:'能解决三件事：景点坐标从估值变真值、美食带评分和人均自动铺量、'+
+    '转场时间用真实路径规划而不是直线距离估。',
+  mine:'<b>建议接。</b>你申请个个人认证 Key（免费额度够用），'+
+       '我写脚本批量拉。这是唯一能让美食和景点数量上一个量级的途径。'},
+ {t:'导出的 HTML 形式够不够',
+  b:'现在是 <code>node scripts/export_guide.js 北京 厦门 4</code> '+
+    '生成单页 HTML，47KB 自包含，能双击打开也能打印。',
+  mine:'如果要发给同行的人，可能需要：手机端直接"导出这条攻略"按钮、'+
+       '或者生成后自动开一个分享链接。<b>想听你说实际怎么用</b>。'},
+ {t:'下一步优先做哪个',
+  b:'候选：接高德（坐标+美食铺量）、铺数据（邯郸/湖南/川西/新疆）、'+
+    '修行程算法（独占一天 + 顺路排）、加"我的行程"保存。',
+  mine:'我的顺序：<b>接高德 → 修行程算法 → 铺数据 → 我的行程</b>。'+
+       '接高德排第一是因为它同时解决坐标和美食两个卡点，'+
+       '而且越晚接返工越多。'},
+];
+
+var KEY='xqbb_review';
+var R={};
+try{ R=JSON.parse(localStorage.getItem(KEY)||'{}')||{}; }catch(e){ R={}; }
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify(R)); }catch(e){} }
+
+var LBL={keep:'保留',change:'要改',hold:'待定'};
+function renderQ(){
+  $('qn').textContent='共 '+QS.length+' 条';
+  $('qList').innerHTML=QS.map(function(q,i){
+    var r=R[i]||{}, v=r.v||'';
+    return '<div class="q'+(v?' done-'+v:'')+'" data-i="'+i+'">'+
+      '<div class="q-h"><div class="q-i">'+(i+1)+'</div><div class="q-t">'+q.t+'</div></div>'+
+      '<div class="q-b">'+q.b+'<br><span class="mine">我的倾向：</span>'+q.mine+'</div>'+
+      '<div class="q-o">'+
+        ['keep','change','hold'].map(function(k){
+          return '<button data-v="'+k+'" class="'+(v===k?'on':'')+'">'+LBL[k]+'</button>';
+        }).join('')+
+      '</div>'+
+      '<div class="q-n"><textarea placeholder="备注（可留空）">'+esc(r.n||'')+'</textarea></div>'+
+      '</div>';
+  }).join('');
+  var done=QS.filter(function(_,i){return R[i]&&R[i].v;}).length;
+  $('prog').innerHTML='已表态 <b>'+done+'</b> / '+QS.length;
+}
+$('qList').addEventListener('click',function(e){
+  var b=e.target.closest('button[data-v]');if(!b)return;
+  var i=+b.closest('.q').getAttribute('data-i'), v=b.getAttribute('data-v');
+  R[i]=R[i]||{};
+  R[i].v = (R[i].v===v) ? '' : v;      // 再点一次取消
+  save();renderQ();
+});
+$('qList').addEventListener('input',function(e){
+  if(e.target.tagName!=='TEXTAREA')return;
+  var i=+e.target.closest('.q').getAttribute('data-i');
+  R[i]=R[i]||{};R[i].n=e.target.value;save();
+});
+
+$('btnExport').onclick=function(){
+  var L=['# 行前必办 · 评审意见','',
+    '日期：'+new Date().toISOString().slice(0,10),''];
+  var groups={change:[],keep:[],hold:[],none:[]};
+  QS.forEach(function(q,i){
+    var r=R[i]||{}, v=r.v||'none';
+    var line='- **'+q.t+'**'+(r.n?'　→ '+r.n:'');
+    groups[v].push(line);
+  });
+  if(groups.change.length) L.push('## 要改','',groups.change.join('\n'),'');
+  if(groups.hold.length)   L.push('## 待定','',groups.hold.join('\n'),'');
+  if(groups.keep.length)   L.push('## 保留原样','',groups.keep.join('\n'),'');
+  if(groups.none.length)   L.push('## 还没表态','',groups.none.join('\n'),'');
+  var text=L.join('\n');
+  var ta=$('out');
+  ta.style.display='block';ta.value=text;
+  ta.focus();ta.select();
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){
+      toast('已复制，直接粘给我就行');
+    },function(){toast('已生成，请手动复制下方文本');});
+  }else{
+    try{document.execCommand('copy');toast('已复制，直接粘给我就行');}
+    catch(e){toast('已生成，请手动复制下方文本');}
+  }
+};
+$('btnClear').onclick=function(){
+  if(!confirm('清空全部表态和备注？'))return;
+  R={};save();renderQ();$('out').style.display='none';toast('已清空');
+};
+
+renderSc();renderQ();
+})();
+</script>
+</body>
+</html>

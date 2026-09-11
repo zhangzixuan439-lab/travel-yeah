@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>北京 → 长沙 攻略</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+  background:#f1f5f9;color:#1f2937;line-height:1.65;-webkit-font-smoothing:antialiased}
+.banner{background:linear-gradient(135deg,#1a365d 0%,#1d4ed8 50%,#3b82f6 100%);
+  color:#fff;padding:30px 34px}
+.banner h1{font-size:26px;font-weight:600;letter-spacing:.5px}
+.banner .sub{font-size:13px;opacity:.92;margin-top:6px}
+.banner .meta{font-size:12px;opacity:.85;margin-top:10px}
+.wrap{max-width:1080px;margin:0 auto;padding:22px}
+.card{background:#fff;border-radius:12px;box-shadow:0 1px 6px rgba(0,0,0,.05);
+  padding:22px 24px;margin-bottom:18px}
+h2{font-size:17px;color:#1e40af;font-weight:600;padding-bottom:9px;margin-bottom:16px;
+  border-bottom:2px solid #dbeafe}
+h3{font-size:15px;color:#1e40af;font-weight:600;margin:22px 0 10px}
+h3:first-of-type{margin-top:0}
+.h3-sub{font-size:12.5px;color:#64748b;font-weight:400}
+h4{font-size:13.5px;color:#334155;font-weight:600;margin:18px 0 8px}
+h4:first-of-type{margin-top:0}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:6px}
+th{background:#2563eb;color:#fff;text-align:left;padding:9px 11px;font-weight:500;
+  font-size:12px;white-space:nowrap}
+td{padding:9px 11px;border-bottom:1px solid #eef2f6;vertical-align:top}
+tbody tr:nth-child(even){background:#f9fafb}
+tbody tr:hover{background:#eff6ff}
+tr.r-trip td{background:#fff7ed}
+tr.r-trip:hover td{background:#ffedd5}
+tr.r-food td{background:#f0fdf7}
+tr.r-food:hover td{background:#dcfce7}
+tr.r-move td{color:#64748b;font-size:12px}
+.mono{font-family:Consolas,Monaco,"Courier New",monospace}
+.nowrap{white-space:nowrap}
+.dim{color:#64748b;font-size:11.5px}
+.note-cell{line-height:1.6}
+.warn-inline{color:#b45309}
+.tag{display:inline-block;font-size:10.5px;padding:1px 7px;border-radius:999px;
+  margin-left:5px;white-space:nowrap;font-weight:500}
+.tag-g{background:#dcfce7;color:#16a34a}
+.tag-o{background:#ffedd5;color:#ea580c}
+.tag-y{background:#fef3c7;color:#b45309}
+.tag-b{background:#e0e7ff;color:#4338ca}
+.note-box{background:#eff6ff;border-left:4px solid #3b82f6;border-radius:6px;
+  padding:12px 15px;font-size:12.5px;margin-bottom:16px;line-height:1.7}
+.warn-box{background:#fffbeb;border-left:4px solid #f59e0b;border-radius:6px;
+  padding:12px 15px;font-size:12.5px;margin-bottom:16px;line-height:1.7}
+.kpi{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+.kpi div{flex:1 1 120px;background:#f8fafc;border:1px solid #e2e8f0;
+  border-radius:9px;padding:13px 15px}
+.kpi .l{font-size:11.5px;color:#64748b}
+.kpi .v{font-size:20px;font-weight:700;color:#1e40af;
+  font-family:Consolas,Monaco,monospace;margin-top:2px}
+.total{background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff;
+  border-radius:10px;padding:16px 20px;margin-bottom:14px}
+.total .l{font-size:12.5px;opacity:.92}
+.total .v{font-size:30px;font-weight:700;font-family:Consolas,Monaco,monospace;
+  line-height:1.2}
+code{background:#f3f4f6;color:#1d4ed8;font-family:Consolas,Monaco,monospace;
+  font-size:11.5px;padding:1px 5px;border-radius:3px}
+ul{margin:6px 0 0 18px;font-size:12.5px;line-height:1.75}
+@media print{body{background:#fff}.card{box-shadow:none;border:1px solid #e2e8f0}}
+@media(max-width:720px){
+  .wrap{padding:12px}.card{padding:16px 14px}
+  table{font-size:11.5px}th,td{padding:7px 8px}
+  .banner{padding:22px 18px}.banner h1{font-size:21px}
+}
+</style></head><body>
+
+<div class="banner">
+  <h1>北京 → 长沙　3 天2 晚攻略</h1>
+  <div class="sub">夜经济与小吃密度全国前列；博物馆有马王堆</div>
+  <div class="meta">由旅游攻略知识库自动生成 · 2026-09-11 ·
+    行程由「建议停留时长 + 开放时间 + 景点间距离」排出，非人工编排</div>
+</div>
+
+<div class="wrap">
+
+  <div class="card">
+    <h2>先看这几条</h2>
+    <div class="note-box">
+      <b>花费 ¥1,965 起</b>是按库里区间下限估的：交通取票价下限×2，
+      住宿取「岳麓山与大学城」舒适型下限×2 晚，
+      吃饭按每餐人均估值。<b>全是估值，实际按当日价格浮动。</b>
+    </div>
+    <div class="warn-box">
+      <b>交通时间只算车上</b>，其余取决于你住哪，库里估不准就不写 ——
+      出门请自己往前留。<br>
+      <b>不存具体车次号</b>，调图会变，出发前用 12306 或高德查当日班次。
+    </div>
+    <div class="total">
+      <div class="l">人均预估（不含购物）</div>
+      <div class="v">¥1,965</div>
+    </div>
+    <div class="kpi">
+      <div><div class="l">往返交通</div><div class="v">¥1,200</div></div>
+      <div><div class="l">住宿 2 晚</div><div class="v">¥560</div></div>
+      <div><div class="l">门票</div><div class="v">¥0</div></div>
+      <div><div class="l">吃饭</div><div class="v">¥115</div></div>
+      <div><div class="l">市内交通</div><div class="v">¥90</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>每日行程</h2>
+    <h3>DAY 1　<span class="h3-sub">抵达 长沙　08:00 – 19:58</span></h3>
+      <table><thead><tr><th style="width:104px">时段</th>
+        <th style="width:76px">类型</th><th style="width:160px">地点</th>
+        <th>说明</th></tr></thead><tbody><tr class="r-trip">
+        <td class="mono nowrap">08:00–10:25</td>
+        <td class="nowrap">🚄 交通</td>
+        <td><b>北京 → 长沙</b></td>
+        <td class="note-cell">飞机　乘坐 2h25　¥600-1900</td>
+      </tr><tr class="">
+        <td class="mono nowrap">11:05–12:35</td>
+        <td class="nowrap">📍 景点</td>
+        <td><b>橘子洲头</b></td>
+        <td class="note-cell">湘江中央的长洲；免费且能看两岸城市　📷 日落时逆光；周末夜间有烟火<br>⚠ 洲很长，建议坐观光车；烟火夜人流管制要早去</td>
+      </tr><tr class="r-food">
+        <td class="mono nowrap">12:35–13:35</td>
+        <td class="nowrap">🍜 吃饭</td>
+        <td><b>玉楼东</b> <span class="tag tag-g">午餐</span></td>
+        <td class="note-cell">湘菜　人均约 ¥90　人均比社区湘菜馆高；适合正餐</td>
+      </tr><tr class="r-move">
+        <td class="mono nowrap">13:45–13:55</td>
+        <td class="nowrap">🚇 转场</td>
+        <td><b>前往 杜甫江阁</b></td>
+        <td class="note-cell">🚇 地铁1号线 · 湘江中路　步行 8min</td>
+      </tr><tr class="">
+        <td class="mono nowrap">13:55–14:45</td>
+        <td class="nowrap">📍 景点</td>
+        <td><b>杜甫江阁</b></td>
+        <td class="note-cell">湘江边的免费高点；拍长沙夜景最省事的位置　📷 日落后蓝调时段<br>⚠ 阁内可能收费，外围平台免费</td>
+      </tr><tr class="r-move">
+        <td class="mono nowrap">14:45–14:56</td>
+        <td class="nowrap">🚇 转场</td>
+        <td><b>前往 太平老街</b></td>
+        <td class="note-cell">🚇 地铁1号线与2号线 · 五一广场　步行 6min</td>
+      </tr><tr class="">
+        <td class="mono nowrap">14:56–15:56</td>
+        <td class="nowrap">📍 景点</td>
+        <td><b>太平老街</b></td>
+        <td class="note-cell">老街格局还在；茶颜悦色与小吃集中　📷 夜间灯笼与招牌<br>⚠ 是游客街，价格偏高；本地人更多去坡子街或社区店</td>
+      </tr><tr class="r-move">
+        <td class="mono nowrap">15:56–16:06</td>
+        <td class="nowrap">🚇 转场</td>
+        <td><b>前往 五一广场与IFS</b></td>
+        <td class="note-cell">🚇 地铁1号线与2号线 · 五一广场　步行 2min</td>
+      </tr><tr class="">
+        <td class="mono nowrap">16:06–17:06</td>
+        <td class="nowrap">📍 景点</td>
+        <td><b>五一广场与IFS</b></td>
+        <td class="note-cell">长沙夜经济的中心；地铁 1/2 号线交汇　📷 日落后夜景<br>⚠ 周末人极多；楼顶雕塑要进商场坐扶梯上去</td>
+      </tr><tr class="r-move">
+        <td class="mono nowrap">17:06–17:28</td>
+        <td class="nowrap">🚇 转场</td>
+        <td><b>前往 岳麓山与爱晚亭</b></td>
+        <td class="note-cell">🚇 地铁2号线 · 溁湾镇　步行 15min</td>
+      </tr><tr class="">
+        <td class="mono nowrap">17:28–19:58</td>
+        <td class="nowrap">📍 景点</td>
+        <td><b>岳麓山与爱晚亭</b></td>
+        <td class="note-cell">千年学府岳麓书院在山脚，爱晚亭在半山；免费　📷 上午与日落；11 月下旬红叶<br>⚠ 登顶约 1 小时；有索道。书院单独收费</td>
+      </tr></tbody></table><h3>DAY 2　<span class="h3-sub">长沙　10:00 – 16:27</span></h3>
+      <table><thead><tr><th style="width:104px">时段</th>
+        <th style="width:76px">类型</th><th style="width:160px">地点</th>
+        <th>说明</th></tr></thead><tbody><tr class="">
+        <td class="mono nowrap">10:00–11:30</td>
+        <td class="nowrap">📍 景点</td>
+        <td><b>谢子龙影像艺术馆</b></td>
+        <td class="note-cell">国内少见的专业影像艺术馆；建筑本身比展览更出片　📷 午后强光时墙面明暗最好<br>⚠ 周一闭馆；展览换期时可能只开部分</td>
+      </tr><tr class="r-move">
+        <td class="mono nowrap">11:30–12:02</td>
+        <td class="nowrap">🚇 转场</td>
+        <td><b>前往 岳麓书院</b></td>
+        <td class="note-cell">🚇 地铁4号线 · 湖南大学　步行 12min</td>
+      </tr><tr class="">
+        <td class="mono nowrap">12:02–13:32</td>
+        <td class="nowrap">📍 景点</td>
+        <td><b>岳麓书院</b></td>
+        <td class="note-cell">中国现存最完整的古代书院；朱熹王阳明都在这讲过学　📷 上午光线穿过庭院<br>⚠ 在岳麓山脚，与爱晚亭连着走。门票需单独买</td>
+      </tr><tr class="r-move">
+        <td class="mono nowrap">13:32–13:55</td>
+        <td class="nowrap">🚇 转场</td>
+        <td><b>前往 长沙简牍博物馆</b></td>
+        <td class="note-cell">🚇 地铁1号线 · 南门口　步行 12min</td>
+      </tr><tr class="">
+        <td class="mono nowrap">13:55–15:15</td>
+        <td class="nowrap">📍 景点</td>
+        <td><b>长沙简牍博物馆</b></td>
+        <td class="note-cell">十万枚三国吴简出土于此；研究三国最直接的实物　📷 室内为主<br>⚠ 周一闭馆；内容偏专业，没兴趣会觉得枯燥</td>
+      </tr><tr class="r-move">
+        <td class="mono nowrap">15:15–15:37</td>
+        <td class="nowrap">🚇 转场</td>
+        <td><b>前往 开福寺</b></td>
+        <td class="note-cell">🚇 地铁1号线 · 开福寺　步行 8min</td>
+      </tr><tr class="">
+        <td class="mono nowrap">15:37–16:27</td>
+        <td class="nowrap">📍 景点</td>
+        <td><b>开福寺</b></td>
+        <td class="note-cell">五代十国始建；市区内少有的清静处　📷 上午<br>⚠ 体量不大，半小时到一小时</td>
+      </tr></tbody></table><h3>DAY 3　<span class="h3-sub">返程　09:00 – 20:25</span></h3>
+      <table><thead><tr><th style="width:104px">时段</th>
+        <th style="width:76px">类型</th><th style="width:160px">地点</th>
+        <th>说明</th></tr></thead><tbody><tr class="">
+        <td class="mono nowrap">09:00–12:00</td>
+        <td class="nowrap">📍 景点</td>
+        <td><b>湖南博物院</b> <span class="tag tag-y">需预约</span></td>
+        <td class="note-cell">马王堆汉墓的全部核心文物都在这；免费但需预约　📷 室内为主<br>🎫 需提前预约：龙门石窟　提前天数未核实<br>⚠ 需预约且周一闭馆；辛追墓展区假期排队久</td>
+      </tr><tr class="r-food">
+        <td class="mono nowrap">12:00–13:00</td>
+        <td class="nowrap">🍜 吃饭</td>
+        <td><b>杨裕兴</b> <span class="tag tag-g">午餐</span></td>
+        <td class="note-cell">面　人均约 ¥25　多家分店；口味标准化</td>
+      </tr><tr class="r-move">
+        <td class="mono nowrap">13:10–18:00</td>
+        <td class="nowrap">🕐 空档</td>
+        <td><b>自由安排</b></td>
+        <td class="note-cell">库里的景点这趟已经排完了。可以买手信、回去补一个想再看的地方，或者早点到机场。</td>
+      </tr><tr class="r-trip">
+        <td class="mono nowrap">18:00–20:25</td>
+        <td class="nowrap">🚄 交通</td>
+        <td><b>长沙 → 北京</b></td>
+        <td class="note-cell">飞机　乘坐 2h25　¥600-1900</td>
+      </tr></tbody></table>
+    <div class="note-box" style="margin-top:16px;margin-bottom:0">
+      日落类机位已尽量卡在日落前（本月约
+      <code>18:41</code>，估算值）。
+      转场时间按直线距离估，实际用高德更准。想换景点就在手机端「景点」页勾选，
+      攻略会按你勾的重排。
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>怎么去　<span class="dim" style="font-weight:400">2 种走法</span></h2>
+    <table><thead><tr><th style="width:150px">方式</th>
+      <th style="width:82px">车上时间</th><th style="width:110px">票价</th>
+      <th style="width:170px">站点</th><th>班次 / 提醒</th></tr></thead>
+      <tbody><tr>
+      <td><b>飞机</b><span class="tag tag-g">车上最短</span></td>
+      <td class="mono nowrap">2h25</td>
+      <td class="mono nowrap">¥600-1900</td>
+      <td class="nowrap">首都或大兴 → 黄花</td>
+      <td>密集</td>
+    </tr><tr>
+      <td><b>高铁</b> G字头</td>
+      <td class="mono nowrap">5h50</td>
+      <td class="mono nowrap">¥560-910</td>
+      <td class="nowrap">北京西 → 长沙南</td>
+      <td>较多</td>
+    </tr></tbody></table>
+    <h3 style="margin-top:24px">到站后怎么去</h3><h4>长沙南站出发</h4>
+      <table><thead><tr><th style="width:150px">去哪</th>
+      <th style="width:110px">方式</th><th style="width:70px">耗时</th>
+      <th style="width:64px">票价</th><th>怎么走</th></tr></thead>
+      <tbody><tr>
+      <td class="nowrap">五一广场与IFS</td>
+      <td class="nowrap">地铁<br><span class="dim">地铁2号线</span></td>
+      <td class="mono nowrap">25min</td>
+      <td class="mono nowrap">¥4</td>
+      <td>长沙南站直接乘 2 号线至五一广场站　<b>出站步行 2min</b><br><span class="warn-inline">长沙南站到市中心一趟地铁直达，很省事</span></td>
+    </tr><tr>
+      <td class="nowrap">橘子洲头</td>
+      <td class="nowrap">地铁<br><span class="dim">地铁2号线</span></td>
+      <td class="mono nowrap">35min</td>
+      <td class="mono nowrap">¥5</td>
+      <td>长沙南站乘 2 号线至橘子洲站　<b>出站步行 5min</b><br><span class="warn-inline">直达</span></td>
+    </tr><tr>
+      <td class="nowrap">湖南博物院</td>
+      <td class="nowrap">地铁<br><span class="dim">地铁2号线转1号线</span></td>
+      <td class="mono nowrap">45min</td>
+      <td class="mono nowrap">¥5</td>
+      <td>五一广场站换 1 号线至开福寺站　<b>出站步行 15min</b><br><span class="warn-inline">记得先预约</span></td>
+    </tr></tbody></table>
+  </div>
+
+  <div class="card">
+    <h2>住哪　<span class="dim" style="font-weight:400">2 个片区 · 平日价</span></h2>
+    <div class="note-box">
+      住宿最关键的不是订哪家，是<b>住哪个片区</b> —— 住错片区每天多花两小时通勤。
+      房价是<b>区间估值</b>，实时房价拿不到，订房去携程或飞猪比价。
+    </div>
+    <table><thead><tr><th style="width:132px">片区</th><th>为什么住这</th>
+      <th style="width:126px">三档房价</th><th style="width:150px">举例</th>
+      <th style="width:190px">避坑</th></tr></thead>
+      <tbody><tr>
+      <td><b>岳麓山与大学城</b><br>
+        <span class="tag tag-o">商业中心</span></td>
+      <td>地铁 2/4 号线，离岳麓山书院近且比河东便宜<br>
+        <span class="dim">🚇 地铁 2 号线溁湾镇或 4 号线湖南大学站</span><br><span class="dim">🚶 岳麓书院 15min、爱晚亭 25min</span></td>
+      <td class="mono nowrap">经济 ¥150–260<br>
+        舒适 ¥280–480<br>
+        高档 ¥600–1400</td>
+      <td>溁湾镇一带连锁；大学城周边快捷</td>
+      <td><span class="warn-inline">过江去五一广场要 20 分钟地铁；夜宵不如河东方便</span></td>
+    </tr><tr>
+      <td><b>五一广场</b><br>
+        <span class="tag tag-o">商业中心</span></td>
+      <td>地铁 1/2 号线交汇，小吃夜市全在这一带<br>
+        <span class="dim">🚇 地铁 1/2 号线五一广场站</span><br><span class="dim">🚶 太平老街 5min、橘子洲 2 站</span></td>
+      <td class="mono nowrap">经济 ¥200–320<br>
+        舒适 ¥350–600<br>
+        高档 ¥800–1900</td>
+      <td>长沙北辰洲际；五一广场一带连锁</td>
+      <td><span class="warn-inline">夜市到凌晨都吵；对噪音敏感选湘江中路一侧</span></td>
+    </tr></tbody></table>
+  </div>
+
+  <div class="card">
+    <h2>吃什么　<span class="dim" style="font-weight:400">30 条</span></h2>
+    <h3 style="margin-top:0">数据来源</h3>
+    <table><thead><tr><th style="width:112px">来源</th>
+    <th style="width:104px">性质</th><th style="width:64px">本页</th>
+    <th>依据与限度</th></tr></thead><tbody><tr>
+      <td><b>中华老字号</b></td>
+      <td class="nowrap"><span class="tag tag-g">官方名录</span></td>
+      <td class="mono nowrap">5 条</td>
+      <td>商务部认定并公布的「中华老字号」名录，公开可查。店铺存在性可查证，但具体门店的人均与营业时间仍需现场确认。</td>
+    </tr><tr>
+      <td><b>地标老店</b></td>
+      <td class="nowrap"><span class="tag tag-y">长期口碑判断</span></td>
+      <td class="mono nowrap">2 条</td>
+      <td>本地长期公认的店，依据是广泛口碑而<b>不是官方名录</b>。店铺确凿存在，但「是不是最好」属于主观判断。</td>
+    </tr><tr>
+      <td><b>地方特色</b></td>
+      <td class="nowrap"><span class="tag tag-y">只指明吃什么</span></td>
+      <td class="mono nowrap">2 条</td>
+      <td>没有指定具体店铺，只说当地该吃这道菜。需要自己就近找店。</td>
+    </tr><tr>
+      <td><b>高德POI</b></td>
+      <td class="nowrap"><span class="tag tag-y">接口拉取</span></td>
+      <td class="mono nowrap">21 条</td>
+      <td>用高德 Web 服务 API 按本地菜品搜索得到，<b>评分与人均是高德自己的数据（不是大众点评）</b>，营业时间也来自高德。优点是量大且数字真实；缺点是<b>没有避坑信息</b> —— 哪家是游客店、哪家要先谈价，接口不会告诉你。</td>
+    </tr></tbody></table><p class="dim" style="margin-top:8px">
+      还没入库的来源：<b>米其林、黑珍珠、必吃榜</b> ——
+      这三类都有官方公开名单（米其林与黑珍珠官网、必吃榜榜单页），
+      但需要逐城市抄进 <code>data/foods.csv</code>，目前还没做。</p>
+    <div class="warn-box" style="margin-top:14px">
+      <b>关于评分：本页所有店都没有评分。</b>
+      大众点评的评分没有开放接口、抓不到，所以 <code>rating</code> 字段一律留空 ——
+      编一个「4.7 分」比不给更糟。<br>
+      能合法拿到评分的来源有三个：<b>高德 POI 搜索 API</b>（自带评分与人均，
+      有免费额度，也是唯一能自动铺量的途径）、<b>米其林中国官网</b>、
+      <b>黑珍珠官网</b>。接上高德之后这一列才会有数。<br>
+      「依据高/中/低」是<b>录入时的可信度</b>，不是好吃程度：
+      高=官方名录或广为人知；中=知名但细节可能变；低=需重点核实。
+    </div>
+    <div class="note-box">
+      <b>人均全部是估值</b>（<code>price_confidence=low</code>），餐饮价格半年就变，
+      出门前请再确认。<b>店铺本身是真的</b> —— 中华老字号可在商务部名录查证，
+      地标老店是长期公认的存在。
+    </div>
+    <h4>中华老字号　<span class="dim">5 条 · 官方名录</span></h4>
+      <table><thead><tr><th style="width:168px">店名</th>
+      <th style="width:96px">招牌</th><th style="width:104px">人均 / 评分</th>
+      <th style="width:88px">排队</th><th>为什么吃 / 避坑</th></tr></thead>
+      <tbody><tr>
+        <td><b>火宫殿</b>
+          <span class="tag tag-g" title="录入依据的可信度">依据高</span><br><span class="dim">坡子街总店</span></td>
+        <td class="nowrap">臭豆腐与小吃</td>
+        <td class="mono nowrap">约 ¥60<br>
+          <span class="dim">无评分</span></td>
+        <td class="nowrap">★★★★<br><span class="dim">避开饭点</span></td>
+        <td>长沙小吃的集合点；臭豆腐、糖油粑粑、姊妹团子<br><span class="warn-inline">⚠ 坡子街总店游客密度高；口味偏标准化，本地人更多去社区摊</span></td>
+      </tr><tr>
+        <td><b>玉楼东</b>
+          <span class="tag tag-g" title="录入依据的可信度">依据高</span></td>
+        <td class="nowrap">湘菜</td>
+        <td class="mono nowrap">约 ¥90<br>
+          <span class="dim">无评分</span></td>
+        <td class="nowrap">★★★</td>
+        <td>百年湘菜馆；麻辣子鸡与组庵鱼翅是老招牌<br><span class="warn-inline">⚠ 人均比社区湘菜馆高；适合正餐</span></td>
+      </tr><tr>
+        <td><b>杨裕兴</b>
+          <span class="tag tag-g" title="录入依据的可信度">依据高</span></td>
+        <td class="nowrap">面</td>
+        <td class="mono nowrap">约 ¥25<br>
+          <span class="dim">无评分</span></td>
+        <td class="nowrap">★★★<br><span class="dim">早餐</span></td>
+        <td>长沙老牌面馆；肉丝码面与酱油码<br><span class="warn-inline">⚠ 多家分店；口味标准化</span></td>
+      </tr><tr>
+        <td><b>双燕楼</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">馄饨</td>
+        <td class="mono nowrap">约 ¥20<br>
+          <span class="dim">无评分</span></td>
+        <td class="nowrap">★★★</td>
+        <td>老字号馄饨；皮薄汤清<br><span class="warn-inline">⚠ 店面简单；主要吃早餐</span></td>
+      </tr><tr>
+        <td><b>德园</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">包子</td>
+        <td class="mono nowrap">约 ¥20<br>
+          <span class="dim">无评分</span></td>
+        <td class="nowrap">★★★</td>
+        <td>长沙老包子铺；糖包与菜包<br><span class="warn-inline">⚠ 现做现卖；下午品种少</span></td>
+      </tr></tbody></table><h4>地标老店　<span class="dim">2 条 · 长期口碑判断</span></h4>
+      <table><thead><tr><th style="width:168px">店名</th>
+      <th style="width:96px">招牌</th><th style="width:104px">人均 / 评分</th>
+      <th style="width:88px">排队</th><th>为什么吃 / 避坑</th></tr></thead>
+      <tbody><tr>
+        <td><b>文和友</b>
+          <span class="tag tag-g" title="录入依据的可信度">依据高</span></td>
+        <td class="nowrap">小龙虾与湘菜</td>
+        <td class="mono nowrap">约 ¥130<br>
+          <span class="dim">无评分</span></td>
+        <td class="nowrap">★★★★★<br><span class="dim">避开周末</span></td>
+        <td>把老长沙街景搬进商场的网红餐厅；口味虾是主打<br><span class="warn-inline">⚠ 排队常 3-4 小时，本地人基本不去了。想吃虾去社区虾店更实在</span></td>
+      </tr><tr>
+        <td><b>茶颜悦色</b>
+          <span class="tag tag-g" title="录入依据的可信度">依据高</span></td>
+        <td class="nowrap">奶茶</td>
+        <td class="mono nowrap">约 ¥20<br>
+          <span class="dim">无评分</span></td>
+        <td class="nowrap">★★★</td>
+        <td>长沙本地奶茶；幽兰拿铁是招牌<br><span class="warn-inline">⚠ 门店已经很多，不用专门排长队；机场和车站店价格一样</span></td>
+      </tr></tbody></table><h4>地方特色　<span class="dim">2 条 · 只指明吃什么</span></h4>
+      <table><thead><tr><th style="width:168px">店名</th>
+      <th style="width:96px">招牌</th><th style="width:104px">人均 / 评分</th>
+      <th style="width:88px">排队</th><th>为什么吃 / 避坑</th></tr></thead>
+      <tbody><tr>
+        <td><b>（未指定店铺）</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">口味虾</td>
+        <td class="mono nowrap">约 ¥120<br>
+          <span class="dim">无评分</span></td>
+        <td class="nowrap">★★★★<br><span class="dim">5-8 月夜里</span></td>
+        <td>长沙夏季夜宵的主角；5-8 月最肥<br><span class="warn-inline">⚠ 季节性极强，秋冬去吃不到好的；社区虾店比网红店实在</span><br><span class="dim">未指定具体店需补充</span></td>
+      </tr><tr>
+        <td><b>（未指定店铺）</b>
+          <span class="tag tag-o" title="录入依据的可信度">依据低</span></td>
+        <td class="nowrap">糖油粑粑</td>
+        <td class="mono nowrap">约 ¥10<br>
+          <span class="dim">无评分</span></td>
+        <td class="nowrap">★★★</td>
+        <td>现炸的糯米粑粑裹糖浆；街边小摊<br><span class="warn-inline">⚠ 要吃刚出锅的；凉了口感差很多</span><br><span class="dim">未指定具体店需补充</span></td>
+      </tr></tbody></table><h4>高德POI　<span class="dim">21 条 · 接口拉取</span></h4>
+      <table><thead><tr><th style="width:168px">店名</th>
+      <th style="width:96px">招牌</th><th style="width:104px">人均 / 评分</th>
+      <th style="width:88px">排队</th><th>为什么吃 / 避坑</th></tr></thead>
+      <tbody><tr>
+        <td><b>壹双好手</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">中餐厅</td>
+        <td class="mono nowrap">约 ¥73<br>
+          <span class="dim">4.9 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.9；搜「湘菜」时命中，实际是中餐厅<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr><tr>
+        <td><b>冇味湘潭菜(岳麓山总店)</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">湖南菜(湘菜)</td>
+        <td class="mono nowrap">约 ¥64<br>
+          <span class="dim">4.8 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.8；搜「湘菜」时命中，实际是湖南菜(湘菜)<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr><tr>
+        <td><b>耕渔雅院·湖南鱼鲜(雨花店)</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">中餐厅</td>
+        <td class="mono nowrap">约 ¥96<br>
+          <span class="dim">4.8 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.8；搜「湘菜」时命中，实际是中餐厅<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr><tr>
+        <td><b>豆夫酥酥臭名远扬臭豆腐(黑金店)</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">臭豆腐</td>
+        <td class="mono nowrap">约 ¥14<br>
+          <span class="dim">4.7 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.7 的臭豆腐店<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr><tr>
+        <td><b>黑色经典臭豆腐(五一庙街店)</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">臭豆腐</td>
+        <td class="mono nowrap">约 ¥21<br>
+          <span class="dim">4.6 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.6 的臭豆腐店<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr><tr>
+        <td><b>黑色经典长沙臭豆腐(太平街口店)</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">臭豆腐</td>
+        <td class="mono nowrap">约 ¥20<br>
+          <span class="dim">4.4 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.4 的臭豆腐店<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr><tr>
+        <td><b>严三毛口味虾(迎新路总店)</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">口味虾</td>
+        <td class="mono nowrap">约 ¥101<br>
+          <span class="dim">4.7 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.7 的口味虾店<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr><tr>
+        <td><b>辣不怕口味虾(长沙总店)</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">口味虾</td>
+        <td class="mono nowrap">约 ¥91<br>
+          <span class="dim">4.6 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.6 的口味虾店<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr><tr>
+        <td><b>大晴老板不在·锡纸烧烤大排档</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">中餐厅</td>
+        <td class="mono nowrap">约 ¥65<br>
+          <span class="dim">4.9 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.9；搜「口味虾」时命中，实际是中餐厅<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr><tr>
+        <td><b>老头子糖油粑粑</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">糖油粑粑</td>
+        <td class="mono nowrap">约 ¥6<br>
+          <span class="dim">4.6 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.6 的糖油粑粑店<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr><tr>
+        <td><b>李公庙糖油粑粑(李公庙巷)</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">糖油粑粑</td>
+        <td class="mono nowrap">约 ¥9<br>
+          <span class="dim">4.5 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.5 的糖油粑粑店<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr><tr>
+        <td><b>糖油粑粑臭豆腐(蔡锷北路店)</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">糖油粑粑</td>
+        <td class="mono nowrap">约 ¥7<br>
+          <span class="dim">4.4 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.4 的糖油粑粑店<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr><tr>
+        <td><b>易裕和·长沙米粉(竹塘西店)</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">米粉</td>
+        <td class="mono nowrap">约 ¥18<br>
+          <span class="dim">4.8 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.8 的米粉店<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr><tr>
+        <td><b>傻老米长沙羊肉粉</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">中餐厅</td>
+        <td class="mono nowrap">约 ¥20<br>
+          <span class="dim">4.8 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.8；搜「米粉」时命中，实际是中餐厅<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr><tr>
+        <td><b>八一桥原味粉馆(八一桥店)</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">快餐厅</td>
+        <td class="mono nowrap">约 ¥16<br>
+          <span class="dim">4.7 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.7；搜「米粉」时命中，实际是快餐厅<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr><tr>
+        <td><b>坛宗剁椒鱼头(悦方店)</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">剁椒鱼头</td>
+        <td class="mono nowrap">约 ¥96<br>
+          <span class="dim">4.6 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.6 的剁椒鱼头店<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr><tr>
+        <td><b>渔乡米香·剁椒鱼头(桔园店)</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">剁椒鱼头</td>
+        <td class="mono nowrap">约 ¥65<br>
+          <span class="dim">4.6 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.6 的剁椒鱼头店<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr><tr>
+        <td><b>我家小院(高云店)</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">中餐厅</td>
+        <td class="mono nowrap">约 ¥50<br>
+          <span class="dim">4.8 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.8；搜「剁椒鱼头」时命中，实际是中餐厅<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr><tr>
+        <td><b>炖钵钵常德钵子菜(观沙岭总店)</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">钵子菜</td>
+        <td class="mono nowrap">约 ¥53<br>
+          <span class="dim">4.6 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.6 的钵子菜店<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr><tr>
+        <td><b>宴武陵中餐厅·汉寿甲鱼常德菜馆(梅溪半岛店)</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">中餐厅</td>
+        <td class="mono nowrap">约 ¥167<br>
+          <span class="dim">4.7 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.7；搜「钵子菜」时命中，实际是中餐厅<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr><tr>
+        <td><b>东湖印象·汉寿甲鱼常德菜馆(北辰店)</b>
+          <span class="tag tag-y" title="录入依据的可信度">依据中</span></td>
+        <td class="nowrap">中餐厅</td>
+        <td class="mono nowrap">约 ¥200<br>
+          <span class="dim">4.7 分（高德）</span></td>
+        <td class="nowrap">—</td>
+        <td>高德评分 4.7；搜「钵子菜」时命中，实际是中餐厅<br><span class="dim">高德批量拉取；评分与人均来自高德，非大众点评</span></td>
+      </tr></tbody></table>
+  </div>
+
+  <div class="card">
+    <h2>玩什么　<span class="dim" style="font-weight:400">10 处</span></h2>
+    <h4><span class="tag tag-o">网红</span>　3 处
+      <span class="dim">社交平台热度高，人也最多</span></h4>
+      <table><thead><tr><th style="width:168px">名称</th>
+      <th style="width:74px">停留</th><th style="width:74px">门票</th>
+      <th style="width:56px">出片</th><th>为什么去 / 避坑</th></tr></thead>
+      <tbody><tr>
+        <td><b>橘子洲头</b></td>
+        <td class="mono nowrap">1h30</td>
+        <td class="mono nowrap">免费</td>
+        <td class="mono nowrap">80</td>
+        <td>湘江中央的长洲；免费且能看两岸城市<br><span class="dim">📷 日落时逆光；周末夜间有烟火</span><br><span class="dim">🚇 地铁2号线 · 橘子洲　步行 5min</span><br><span class="warn-inline">⚠ 洲很长，建议坐观光车；烟火夜人流管制要早去</span></td>
+      </tr><tr>
+        <td><b>五一广场与IFS</b></td>
+        <td class="mono nowrap">1h</td>
+        <td class="mono nowrap">免费</td>
+        <td class="mono nowrap">72</td>
+        <td>长沙夜经济的中心；地铁 1/2 号线交汇<br><span class="dim">📷 日落后夜景</span><br><span class="dim">🚇 地铁1号线与2号线 · 五一广场　步行 2min</span><br><span class="warn-inline">⚠ 周末人极多；楼顶雕塑要进商场坐扶梯上去</span></td>
+      </tr><tr>
+        <td><b>太平老街</b></td>
+        <td class="mono nowrap">1h</td>
+        <td class="mono nowrap">免费</td>
+        <td class="mono nowrap">70</td>
+        <td>老街格局还在；茶颜悦色与小吃集中<br><span class="dim">📷 夜间灯笼与招牌</span><br><span class="dim">🚇 地铁1号线与2号线 · 五一广场　步行 6min</span><br><span class="warn-inline">⚠ 是游客街，价格偏高；本地人更多去坡子街或社区店</span></td>
+      </tr></tbody></table><h4><span class="tag tag-g">小众</span>　4 处
+      <span class="dim">游客少，本地人常去</span></h4>
+      <table><thead><tr><th style="width:168px">名称</th>
+      <th style="width:74px">停留</th><th style="width:74px">门票</th>
+      <th style="width:56px">出片</th><th>为什么去 / 避坑</th></tr></thead>
+      <tbody><tr>
+        <td><b>谢子龙影像艺术馆</b></td>
+        <td class="mono nowrap">1h30</td>
+        <td class="mono nowrap">待核实</td>
+        <td class="mono nowrap">88</td>
+        <td>国内少见的专业影像艺术馆；建筑本身比展览更出片<br><span class="dim">📷 午后强光时墙面明暗最好</span><br><span class="dim">🚇 地铁3号线 · 洋湖湿地公园　步行 15min</span><br><span class="warn-inline">⚠ 周一闭馆；展览换期时可能只开部分</span></td>
+      </tr><tr>
+        <td><b>杜甫江阁</b></td>
+        <td class="mono nowrap">50min</td>
+        <td class="mono nowrap">免费</td>
+        <td class="mono nowrap">84</td>
+        <td>湘江边的免费高点；拍长沙夜景最省事的位置<br><span class="dim">📷 日落后蓝调时段</span><br><span class="dim">🚇 地铁1号线 · 湘江中路　步行 8min</span><br><span class="warn-inline">⚠ 阁内可能收费，外围平台免费</span></td>
+      </tr><tr>
+        <td><b>开福寺</b></td>
+        <td class="mono nowrap">50min</td>
+        <td class="mono nowrap">待核实</td>
+        <td class="mono nowrap">68</td>
+        <td>五代十国始建；市区内少有的清静处<br><span class="dim">📷 上午</span><br><span class="dim">🚇 地铁1号线 · 开福寺　步行 8min</span><br><span class="warn-inline">⚠ 体量不大，半小时到一小时</span></td>
+      </tr><tr>
+        <td><b>长沙简牍博物馆</b></td>
+        <td class="mono nowrap">1h20</td>
+        <td class="mono nowrap">免费</td>
+        <td class="mono nowrap">60</td>
+        <td>十万枚三国吴简出土于此；研究三国最直接的实物<br><span class="dim">📷 室内为主</span><br><span class="dim">🚇 地铁1号线 · 南门口　步行 12min</span><br><span class="warn-inline">⚠ 周一闭馆；内容偏专业，没兴趣会觉得枯燥</span></td>
+      </tr></tbody></table><h4><span class="tag tag-y">经典</span>　3 处
+      <span class="dim">到了就该去的标准项</span></h4>
+      <table><thead><tr><th style="width:168px">名称</th>
+      <th style="width:74px">停留</th><th style="width:74px">门票</th>
+      <th style="width:56px">出片</th><th>为什么去 / 避坑</th></tr></thead>
+      <tbody><tr>
+        <td><b>岳麓山与爱晚亭</b></td>
+        <td class="mono nowrap">2h30</td>
+        <td class="mono nowrap">免费</td>
+        <td class="mono nowrap">82</td>
+        <td>千年学府岳麓书院在山脚，爱晚亭在半山；免费<br><span class="dim">📷 上午与日落；11 月下旬红叶</span><br><span class="dim">🚇 地铁2号线 · 溁湾镇　步行 15min</span><br><span class="warn-inline">⚠ 登顶约 1 小时；有索道。书院单独收费</span></td>
+      </tr><tr>
+        <td><b>岳麓书院</b></td>
+        <td class="mono nowrap">1h30</td>
+        <td class="mono nowrap">待核实</td>
+        <td class="mono nowrap">80</td>
+        <td>中国现存最完整的古代书院；朱熹王阳明都在这讲过学<br><span class="dim">📷 上午光线穿过庭院</span><br><span class="dim">🚇 地铁4号线 · 湖南大学　步行 12min</span><br><span class="warn-inline">⚠ 在岳麓山脚，与爱晚亭连着走。门票需单独买</span></td>
+      </tr><tr>
+        <td><b>湖南博物院</b> <span class="tag tag-y">需预约</span></td>
+        <td class="mono nowrap">3h</td>
+        <td class="mono nowrap">免费</td>
+        <td class="mono nowrap">62</td>
+        <td>马王堆汉墓的全部核心文物都在这；免费但需预约<br><span class="dim">📷 室内为主</span><br><span class="dim">🚇 地铁1号线 · 开福寺　步行 15min</span><br><span class="warn-inline">⚠ 需预约且周一闭馆；辛追墓展区假期排队久</span></td>
+      </tr></tbody></table>
+  </div>
+
+  <div class="card">
+    <h2>出发前必办</h2>
+    <div class="warn-box">
+      下面这些<b>错过放票就去不了</b>。库里这批预约规则大多还没对过官方渠道，
+      标「未核实」的请自己查一遍官方小程序或公众号。
+    </div>
+    <table><thead><tr><th style="width:150px">项目</th>
+    <th style="width:96px">提前天数</th><th style="width:90px">放票时刻</th>
+    <th style="width:80px">抢票难度</th><th>渠道 / 备用方案</th></tr></thead><tbody><tr>
+        <td><b>湖南博物院</b></td>
+        <td class="mono"><span class="warn-inline">未核实</span></td>
+        <td class="mono">—</td>
+        <td>★★★</td>
+        <td>湖南博物院<br><span class="warn-inline">规则未核实，出行前务必对官方渠道</span></td>
+      </tr></tbody></table>
+  </div>
+
+  <div class="card">
+    <h2>这份攻略的边界</h2>
+    <ul>
+      <li>所有数据<b>未经官方核实</b>（<code>verified=0</code>），门票、房价、人均、
+        车次票价都会变，出行前请自己对一遍</li>
+      <li>景点坐标是<b>估值</b>（精度约几百米），够用来排分天顺序，不够导航</li>
+      <li>餐厅<b>人均是估值</b>，<code>price_confidence</code> 一律标 <code>low</code></li>
+      <li>住宿只到<b>片区级</b>，给三档区间 + 旺季系数，不给单店实时房价</li>
+      <li>交通<b>只算车上时间</b></li>
+      <li>拥挤度、实时房价、实时车次<b>都拿不到</b>，产品设计上正面承认</li>
+    </ul>
+  </div>
+
+</div></body></html>
