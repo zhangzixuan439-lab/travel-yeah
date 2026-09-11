@@ -57,6 +57,10 @@ CITY_DISHES = {
     "D058": ("泉州", ["面线糊", "闽南菜", "牛肉羹", "润饼菜", "姜母鸭"]),
 }
 
+# 没在 CITY_DISHES 里配菜单的城市用这组通用词。
+# 拿到的不如按本地菜搜精准，但总比这个城市一条美食都没有强。
+GENERIC = ["本地特色菜", "老字号", "特色小吃", "农家菜", "私房菜"]
+
 BAD_NAME = ("旗舰店", "加盟", "招商", "总部", "培训", "配送", "外卖",
             "预制", "食品厂", "批发")
 
@@ -81,6 +85,11 @@ def dish_of(query: str, p) -> tuple:
     return fine, False
 
 
+def data_cities(data, I):
+    """已经有美食的城市。"""
+    return [{"city": r[I["city"]]} for r in data]
+
+
 def load_csv():
     rows = list(csv.reader(io.StringIO(
         io.open(CSV, encoding="utf-8-sig").read())))
@@ -90,15 +99,17 @@ def load_csv():
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--city", help="只处理这个城市")
-    ap.add_argument("--all", action="store_true", help="处理全部城市")
+    ap.add_argument("--all", action="store_true", help="处理全部配了菜单的城市")
+    ap.add_argument("--gaps", action="store_true",
+                    help="给所有还没美食的城市补（用通用关键词）")
     ap.add_argument("--dry", action="store_true", help="只看不写")
     ap.add_argument("--min-rating", type=float, default=4.3,
                     help="低于这个评分的不收（默认 4.3）")
     ap.add_argument("--per-dish", type=int, default=3,
                     help="每个菜品最多收几家（默认 3）")
     a = ap.parse_args()
-    if not a.city and not a.all:
-        ap.error("要 --city 某城 或 --all")
+    if not a.city and not a.all and not a.gaps:
+        ap.error("要 --city 某城 / --all / --gaps")
 
     hdr, data = load_csv()
     I = {c: i for i, c in enumerate(hdr)}
@@ -108,8 +119,26 @@ def main() -> int:
     have_dish = {(r[I["city"]], r[I["dish_name"]]) for r in data}
     next_id = max(int(r[0][1:]) for r in data) + 1
 
-    targets = [(d, c, dishes) for d, (c, dishes) in CITY_DISHES.items()
-               if a.all or c == a.city]
+    if a.gaps:
+        # 有景点但还没美食的城市，用通用关键词补
+        import csv as _csv
+        dd = list(_csv.DictReader(open(ROOT / "data" / "destinations.csv",
+                                       encoding="utf-8-sig")))
+        pp = list(_csv.DictReader(open(ROOT / "data" / "pois.csv",
+                                       encoding="utf-8-sig")))
+        has_poi = {r["city"] for r in pp}
+        has_food = {r["city"] for r in data_cities(data, I)}
+        seen_city = set()
+        targets = []
+        for r in dd:
+            c = r["city"]
+            if c in seen_city or c not in has_poi or c in has_food:
+                continue
+            seen_city.add(c)
+            targets.append((r["dest_id"], c, GENERIC))
+    else:
+        targets = [(d, c, dishes) for d, (c, dishes) in CITY_DISHES.items()
+                   if a.all or c == a.city]
     if not targets:
         print("没有匹配的城市。已配置：%s"
               % "、".join(c for c, _ in CITY_DISHES.values()))

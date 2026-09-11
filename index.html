@@ -209,6 +209,26 @@ textarea{min-height:70px;resize:vertical;line-height:1.5;font-size:14px}
 .arr-m{font-size:12px;color:var(--c-text-2);margin-top:4px;line-height:1.55}
 .arr-m b{color:var(--c-text)}
 
+/* 强度选择 */
+.pace-row{display:flex;gap:8px;margin-bottom:10px}
+.pace-b{flex:1;border:1.5px solid var(--c-sep);background:var(--c-card);
+  border-radius:var(--r-sm);padding:11px 8px;text-align:center;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;transition:all .13s}
+.pace-b.on{border-color:var(--c-primary);background:var(--c-primary-light)}
+.pace-b .n{font-size:14px;font-weight:600}
+.pace-b.on .n{color:var(--c-primary-dark)}
+.pace-b .t{font-size:10.5px;color:var(--c-text-3);margin-top:3px}
+.pace-b:active{transform:scale(.97)}
+.pace-pick{border:1.5px solid var(--c-sep);border-radius:var(--r-sm);
+  padding:13px 14px;margin-bottom:10px;cursor:pointer;
+  -webkit-tap-highlight-color:transparent}
+.pace-pick.on{border-color:var(--c-primary);background:var(--c-primary-light)}
+.pace-pick .h{display:flex;align-items:baseline;gap:8px}
+.pace-pick .n{font-size:16px;font-weight:600}
+.pace-pick .tag{font-size:11px}
+.pace-pick .d{font-size:12.5px;color:var(--c-text-2);margin-top:5px;
+  line-height:1.55}
+
 .pk{width:22px;height:22px;border-radius:50%;border:2px solid #CBD5E1;
   display:flex;align-items:center;justify-content:center;font-size:13px;
   color:#fff;flex-shrink:0;cursor:pointer;transition:all .13s;font-weight:700;
@@ -528,6 +548,7 @@ var S={
   kbFrom:Q.get('kbfrom')||Store.get('kbfrom','')||'上海',
   kbTo:Q.get('kbto')!=null?Q.get('kbto'):Store.get('kbto',''),
   kbTab:Q.get('kbtab')||'攻略',
+  kbPace:Q.get('kbpace')||Store.get('pace','')||'',
   kbMode:'全部',
   kbDays:parseInt(Q.get('kbdays'),10)||null
 };
@@ -653,16 +674,47 @@ function renderLib(){
                      「攻略」把整条行程按天串起来，含交通与总花费          */
 
 var KB_TABS=['攻略','路线','景点','美食','住宿'];
+
+/* 旅行强度：一次选择决定整个行程的节奏。
+   出门时间 / 一天几个点 / 每处待多久 / 能忍多远的转场 / 爬不爬山。 */
+var PACES=['懒人','正常人','狠人'];
+var PACE={
+  '懒人':{
+    start:600, end:1200, maxPoi:3, stayMul:1.35, maxMove:30, maxClimb:200,
+    dep:540, back:1020, buffer:60,
+    tag:'睡到自然醒', desc:'10 点出门，一天最多三个地方，每处慢慢逛，'+
+        '转场超过 30 分钟的不去，不安排爬山'},
+  '正常人':{
+    start:540, end:1290, maxPoi:5, stayMul:1.0, maxMove:55, maxClimb:9999,
+    dep:480, back:1080, buffer:40,
+    tag:'有留白也不浪费', desc:'9 点出发，一天三到五个地方，'+
+        '按建议时长逛，转场控制在 55 分钟内'},
+  '狠人':{
+    start:450, end:1350, maxPoi:8, stayMul:0.68, maxMove:95, maxClimb:9999,
+    dep:420, back:1170, buffer:25,
+    tag:'特种兵', desc:'7 点半就出门，一天能塞八个点，每处压缩到七成时间，'+
+        '再远也去 —— 把机票钱摊到最薄'}
+};
+function paceOf(){ return PACE[S.kbPace] || PACE['正常人']; }
 var MODE_GROUPS=['全部','高铁动车','普速火车','飞机','大巴'];
-var HOT_COLOR={'网红':'var(--st-action)','小众':'var(--st-open)','经典':'var(--st-wait)'};
+var HOT_COLOR={'网红':'var(--st-action)','小众':'var(--st-open)',
+               '经典':'var(--st-wait)','未分类':'var(--c-text-3)'};
 var HOT_DESC={'网红':'社交平台热度高，人也最多',
               '小众':'游客少，本地人常去',
-              '经典':'到了就该去的标准项'};
+              '经典':'到了就该去的标准项',
+              '未分类':'高德自动拉的，有评分但没人工判断过'};
+var HOT_ORDER=['网红','小众','经典','未分类'];
 
+function isEst(r){
+  // 估算路线：高德没有城际班次接口，这批是按坐标距离推的
+  return (r.mode||'').indexOf('(估)')>=0||
+         ((r.src_confidence==='low')&&(r.note||'').indexOf('估算')>=0);
+}
 function modeGroup(r){
-  if(r.mode==='飞机')return '飞机';
-  if(r.mode==='大巴')return '大巴';
-  if(r.mode==='普速')return '普速火车';
+  var m=(r.mode||'').replace('(估)','');
+  if(m==='飞机')return '飞机';
+  if(m==='大巴')return '大巴';
+  if(m==='普速')return '普速火车';
   return '高铁动车';
 }
 
@@ -778,7 +830,8 @@ function sunsetMin(lat,month){
 }
 
 /* ---------- 行程生成器 ---------- */
-function buildPlan(from,to,days){
+function buildPlan(from,to,days,paceName){
+  var PC=PACE[paceName||S.kbPace]||PACE['正常人'];
   var city=cityOf(to), d=resolveDest(to);
   var ps=poisOf(to).slice(), fs=foodsOf(to).slice();
   var pk=pickedOf(to);
@@ -792,7 +845,9 @@ function buildPlan(from,to,days){
   var local=(from===to);
 
   // 景点优先级：经典 > 网红 > 小众，同级按出片
-  var rank={'经典':0,'网红':1,'小众':2};
+  // 人工整理的优先 —— 它们有 why_worth、出片指数、避坑；
+  // 「未分类」是高德批量拉的，只在人工那批用完后才补位。
+  var rank={'经典':0,'网红':1,'小众':2,'未分类':9};
   ps.sort(function(a,b){
     var x=(rank[a.hot_type]||3)-(rank[b.hot_type]||3);
     return x||((b.photo_score||0)-(a.photo_score||0));
@@ -808,28 +863,28 @@ function buildPlan(from,to,days){
   }
 
   for(var day=1;day<=days;day++){
-    var items=[], t=540;           // 默认 09:00 开始
+    var items=[], t=PC.start;
     var isFirst=(day===1), isLast=(day===days&&days>1);
 
     if(isFirst&&!local&&go){
-      var dep=480;                 // 假设 08:00 出门
+      var dep=PC.dep;
       items.push({kind:'trip',name:from+' → '+to,
         note:go.mode+(go.train_type&&go.train_type!=='—'?' '+go.train_type+'字头':'')+
              '　乘坐 '+mins(go.duration_min)+'　'+money(go.price_min,go.price_max)+
              (go.transfer_note&&go.transfer_note!=='直达'?'　⚠ '+go.transfer_note:''),
         s:dep,e:dep+tripMin(go)});
-      t=dep+tripMin(go)+40;        // 出站与放行李的缓冲
+      t=dep+tripMin(go)+PC.buffer; // 出站与放行李的缓冲
     }
     if(isLast&&!local&&go){
       // 返程压在最后，当天只排到出发前
-      var back=1080;               // 18:00 前后返程
+      var back=PC.back;
       var cap=back-60;
       var cnt=0;
       while(t<cap){
         var nx=pickNext(items,ps,used,t,cap,sunset,fs,spend);
         if(!nx)break;
         t=nx; cnt++;
-        if(cnt>4)break;
+        if(cnt>=PC.maxPoi)break;
       }
       var lastEnd=items.length?items[items.length-1].e:t;
       if(back-lastEnd>=90){
@@ -846,8 +901,15 @@ function buildPlan(from,to,days){
     }
 
     var guard=0;
-    while(t<1290&&guard++<12){     // 排到 21:30
-      var nt=pickNext(items,ps,used,t,1290,sunset,fs,spend);
+    var nPoi=0;
+    while(t<PC.end&&guard++<16){
+      if(nPoi>=PC.maxPoi)break;
+      var before=items.length;
+      var nt=pickNext(items,ps,used,t,PC.end,sunset,fs,spend);
+      if(nt&&items.length>before){
+        for(var q=before;q<items.length;q++)
+          if(items[q].kind==='poi')nPoi++;
+      }
       if(!nt)break;
       t=nt;
     }
@@ -887,7 +949,7 @@ function buildPlan(from,to,days){
   return {plan:plan,spend:spend,go:go,dest:d,city:city,
           stay:pick,nights:nights,local:local,routes:routes,
           byPick:byPick,nPick:pk.p.length,nPickF:pk.f.length,
-          truncated:truncated,askedDays:days};
+          truncated:truncated,askedDays:days,pace:paceName||S.kbPace,PC:PC};
 
   /* 选下一项：先看该不该吃饭，再选最近的没去过的景点 */
   function pickNext(items,ps,used,t,cap,sunset,fs,spend){
@@ -932,10 +994,20 @@ function buildPlan(from,to,days){
     if(!pickP)return null;
 
     var move=last?transferMin(last,pickP):0;
+    // 强度决定能忍多远的转场、爬不爬山
+    if(move>PC.maxMove||(pickP.climb_m||0)>PC.maxClimb){
+      var alt2=cands.filter(function(p){
+        return p!==pickP&&(p.climb_m||0)<=PC.maxClimb&&
+               (!last||transferMin(last,p)<=PC.maxMove);});
+      if(!alt2.length)return null;
+      pickP=nearest(alt2,last);
+      if(!pickP)return null;
+      move=last?transferMin(last,pickP):0;
+    }
     var s=t+move;
     var op=toMin(pickP.open_time), cl=toMin(pickP.close_time);
     if(op!=null&&s<op) s=op;
-    var stay=pickP.stay_minutes||60;
+    var stay=Math.round((pickP.stay_minutes||60)*PC.stayMul);
     if(cl!=null&&s+stay>cl){
       // 今天赶不上了，换一个
       var alt=cands.filter(function(p){return p!==pickP;});
@@ -946,7 +1018,7 @@ function buildPlan(from,to,days){
       s=t+move;
       op=toMin(pickP.open_time);cl=toMin(pickP.close_time);
       if(op!=null&&s<op)s=op;
-      stay=pickP.stay_minutes||60;
+      stay=Math.round((pickP.stay_minutes||60)*PC.stayMul);
       if(cl!=null&&s+stay>cl)return null;
     }
     if(s+stay>cap)return null;
@@ -1022,6 +1094,12 @@ function tabPlan(from,to){
   if(d) h+='<p class="caliber" style="margin-top:8px">库里对 '+esc(d.name)+
     ' 的建议是 '+d.suggest_days_min+'-'+d.suggest_days_max+' 天（含往返）</p>';
   h+='</div>';
+
+  var PC=res.PC||paceOf();
+  h+='<div class="note"><b>'+esc(S.kbPace)+'</b>：'+esc(PC.desc)+'。'+
+     '<br>这一趟排了 '+res.plan.length+' 天，'+
+     '每天 '+hm(PC.start)+' 开始、最多 '+PC.maxPoi+' 个地方。'+
+     '上面可以随时换档，换完立刻重排。</div>';
 
   if(res.byPick){
     h+='<div class="note">按你勾选的 <b>'+res.nPick+' 处景点</b>'+
@@ -1124,6 +1202,7 @@ function tabRoute(from,to){
       ((r.train_type&&r.train_type!=='—')?' '+esc(r.train_type)+'字头':'')+
       (i===0&&ways.length>1?'<span class="badge" style="background:#ECFDF5;color:#047857">最快</span>':'')+
       (night?'<span class="badge" style="background:#EEF2FF;color:#4338CA">夜车</span>':'')+
+      (isEst(r)?'<span class="badge" style="background:#F1F5F9;color:#64748B">估算</span>':'')+
       '</div><div class="way-p">'+money(r.price_min,r.price_max)+'</div></div>'+
       '<div class="way-t">乘坐 <b>'+mins(r.duration_min)+'</b></div>'+
       '<div class="way-s">'+esc(r.station_from||'')+' → '+esc(r.station_to||'')+
@@ -1132,8 +1211,11 @@ function tabRoute(from,to){
       (night?'<br>夜车卧铺省一晚酒店，白天不占用':'')+
       '</div></div>';
   });
+  var nEst=ways.filter(isEst).length;
   h+='<p class="caliber">时间只算<b>车上</b>，出门请自己往前留。'+
-     '<b>不存具体车次</b>，出发前用 12306 或高德查当日班次。</p>';
+     '<b>不存具体车次</b>，出发前用 12306 或高德查当日班次。'+
+     (nEst?'<br>带「估算」角标的 '+nEst+' 条是<b>按两地直线距离推的</b>'+
+        '（高德没有城际班次接口），误差不小，只用来判断远近。':'')+'</p>';
 
   // 到站后怎么去
   var city=cityOf(to);
@@ -1167,10 +1249,14 @@ function tabPois(to){
   var ps=poisOf(to);
   if(!ps.length)return '<div class="empty">这个地方的景点还没入库</div>';
   var pk=pickedOf(to);
+  var nAuto=ps.filter(function(r){return r.hot_type==='未分类';}).length;
   var h='<div class="note">点左边圆圈<b>勾选你想去的</b>，'+
         '「攻略」页会只按你选的排行程。'+
-        (pk.p.length?'已选 <b>'+pk.p.length+'</b> 处。':'不勾就自动排。')+'</div>';
-  ['网红','小众','经典'].forEach(function(ht){
+        (pk.p.length?'已选 <b>'+pk.p.length+'</b> 处。':'不勾就自动排。')+
+        (nAuto?'<br><b>'+(ps.length-nAuto)+' 处人工整理</b>'+
+          '（带出片指数、机位、避坑）　<b>'+nAuto+' 处高德自动拉取</b>'+
+          '（有评分和营业时间，但没人工判断过）':'')+'</div>';
+  HOT_ORDER.forEach(function(ht){
     var g=ps.filter(function(r){return r.hot_type===ht;});
     if(!g.length)return;
     g.sort(function(a,b){return (b.photo_score||0)-(a.photo_score||0);});
@@ -1284,13 +1370,41 @@ function renderDestList(from){
   var rs=(DATA.routes||[]).filter(function(r){return r.from_city===from;});
   var byTo={};
   rs.forEach(function(r){(byTo[r.to_city]=byTo[r.to_city]||[]).push(r);});
-  var items=Object.keys(byTo).map(function(to){
-    var g=byTo[to].slice().sort(function(a,b){return tripMin(a)-tripMin(b);});
-    return {to:to,best:g[0],n:g.length,d:resolveDest(to)};
-  }).sort(function(a,b){return tripMin(a.best)-tripMin(b.best);});
 
+  // 目的地来自 destinations 全表，不是 routes ——
+  // routes 只录了一部分城市对，按它列会让库看起来空得多。
+  var items=[];
+  (DATA.dests||[]).forEach(function(d){
+    if(d.name===from||d.city===from) return;          // 本地游单独给入口
+    var g=byTo[d.name]||byTo[d.city];
+    if(g&&g.length){
+      var best=g.slice().sort(function(a,b){return tripMin(a)-tripMin(b);})[0];
+      items.push({to:best.to_city,d:d,best:best,n:g.length,
+                  min:tripMin(best),est:null});
+    }else{
+      var e=estimateTrip(from,d.name);
+      items.push({to:d.name,d:d,best:null,n:0,
+                  min:e?e.dur:999999,est:e});
+    }
+  });
+  // routes 里有、但 destinations 里没有的目的地（比如只作为中转城市录的）
+  Object.keys(byTo).forEach(function(to){
+    if(items.some(function(x){return x.to===to;})) return;
+    if(to===from) return;
+    var g=byTo[to];
+    var best=g.slice().sort(function(a,b){return tripMin(a)-tripMin(b);})[0];
+    items.push({to:to,d:resolveDest(to),best:best,n:g.length,
+                min:tripMin(best),est:null});
+  });
+  items.sort(function(a,b){return a.min-b.min;});
+
+  var nReal=items.filter(function(x){return x.best;}).length;
   var h='<div class="note">点任意一条就展开完整攻略。按<b>乘坐时间</b>排序，'+
-        '标红的是这个月不建议去的。</div>';
+        '标红的是这个月不建议去的。<br>'+
+        '其中 <b>'+nReal+'</b> 条有实录的交通数据，其余 '+(items.length-nReal)+
+        ' 条<b>时间和票价是按直线距离估的</b>（库里还没录这条线路），'+
+        '出发前请用 12306 或航司确认。</div>';
+
   var lp=poisOf(from).length, lf=foodsOf(from).length;
   if(lp||lf){
     h+='<div class="dest-row" style="border-left-color:var(--st-free)" data-to="'+
@@ -1300,23 +1414,44 @@ function renderDestList(from){
        '<div class="dr-m">'+lp+' 处景点 · '+lf+' 条美食</div></div>';
   }
   if(!items.length){
-    h+='<div class="empty">库里还没有从 '+esc(from)+' 出发的线路</div>';
+    h+='<div class="empty">库里还没有目的地数据</div>';
     $('kbBody').innerHTML=h;return;
   }
+
   items.forEach(function(it){
-    var r=it.best,d=it.d,ss=seasonState(d);
-    var meta=[modeGroup(r),money(r.price_min,r.price_max)];
+    var d=it.d,ss=seasonState(d);
+    var meta=[],right='';
+    if(it.best){
+      meta.push(modeGroup(it.best));
+      meta.push(money(it.best.price_min,it.best.price_max));
+      if(it.n>1)meta.push(it.n+' 种走法');
+      right=mins(it.min);
+    }else if(it.est){
+      meta.push(it.est.mode+'（估）');
+      meta.push('约 ¥'+it.est.price);
+      right='<span style="color:var(--c-text-3)">~'+mins(it.est.dur)+'</span>';
+    }else{
+      meta.push('<span style="color:var(--c-text-3)">交通数据待补</span>');
+      right='<span style="color:var(--c-text-3)">—</span>';
+    }
     if(d)meta.push(d.suggest_days_min+'-'+d.suggest_days_max+' 天');
-    if(it.n>1)meta.push(it.n+' 种走法');
-    h+='<div class="dest-row'+(ss&&ss.bad?' off':'')+'" data-to="'+esc(it.to)+'">'+
+    var np=d?poisOf(d.name).length:0;
+    if(np)meta.push(np+' 处景点');
+
+    h+='<div class="dest-row'+(ss&&ss.bad?' off':'')+
+      (it.best?'':' style="border-left-color:var(--c-text-3)"')+
+      '" data-to="'+esc(it.to)+'">'+
       '<div class="dr-h"><div class="dr-n">'+esc(it.to)+
       ((d&&d.tag_niche>=60)?'<span class="badge" style="background:#ECFDF5;color:#047857">小众</span>':'')+
-      '</div><div class="dr-t">'+mins(tripMin(r))+'</div></div>'+
+      (it.best?'':'<span class="badge" style="background:#F1F5F9;color:#64748B">估算</span>')+
+      '</div><div class="dr-t">'+right+'</div></div>'+
       '<div class="dr-m">'+meta.join('　')+
       (d&&d.one_liner?'<br>'+esc(d.one_liner):'')+'</div>'+
       (ss&&ss.bad?'<div class="poi-warn">'+esc(ss.txt)+'</div>':'')+'</div>';
   });
-  h+='<p class="caliber">时间只算<b>车上</b>。</p>';
+  h+='<p class="caliber">时间只算<b>车上</b>。标「估算」的是按两地直线距离'+
+     '×1.3 推的（高铁按等效 200km/h、二等座 0.45 元/公里；1200 公里以上按飞机算），'+
+     '<b>误差不小，只用来判断远近</b>。</p>';
   $('kbBody').innerHTML=h;
 }
 
@@ -1373,6 +1508,72 @@ function tabLocalTransit(city){
   return h;
 }
 
+/* 没有 routes 数据时，用两地直线距离粗估交通。
+   规则来自中国高铁/航空的经验值，误差不小，所以显示时必须标「估算」：
+     直线距离 × 1.3 ≈ 实际里程
+     高铁等效时速约 200km/h（含停站），二等座约 0.45 元/实际公里
+     1200 公里以上飞机更实际，飞行按 700km/h + 2 小时地面时间 */
+function estimateTrip(fromName, toName){
+  var fd=resolveDest(fromName), td=resolveDest(toName);
+  var fp=fd&&fd.center_lat!=null?{lat:fd.center_lat,lng:fd.center_lng}:null;
+  var tp=td&&td.center_lat!=null?{lat:td.center_lat,lng:td.center_lng}:null;
+  if(!fp||!tp){
+    // 出发地可能只在 routes 里出现过，没进 destinations，用它任一条线路的起点
+    var any=(DATA.routes||[]).filter(function(r){return r.from_city===fromName;});
+    if(!fp&&any.length){
+      var od=resolveDest(any[0].to_city);
+      if(od) fp=null;   // 拿不到出发地坐标就放弃估算
+    }
+  }
+  if(!fp||!tp) return null;
+  var straight=km(fp,tp);
+  if(straight<1) return null;
+  var real=straight*1.3;
+  if(real>=1200){
+    return {mode:'飞机',dur:Math.round(real/700*60+120),
+            price:Math.round(real*0.75),est:true,dist:Math.round(real)};
+  }
+  return {mode:'高铁',dur:Math.round(real/200*60),
+          price:Math.round(real*0.45),est:true,dist:Math.round(real)};
+}
+
+/* 首次进入先问旅行强度 —— 一次选择比填一堆条件直接 */
+function openPace(first){
+  var h='<div class="handle"></div>'+
+    '<h3>'+(first?'你是哪种旅行的人？':'换个节奏')+'</h3>'+
+    '<div class="sub">'+(first
+      ?'选一个，整条行程的节奏就定了 —— 几点出门、一天几个地方、'+
+       '每处待多久、能忍多远的路。随时可以在攻略页顶部换。'
+      :'换完会立刻重排行程。')+'</div>';
+  PACES.forEach(function(p){
+    var c=PACE[p],on=(p===S.kbPace);
+    h+='<div class="pace-pick'+(on?' on':'')+'" data-pp="'+p+'">'+
+       '<div class="h"><div class="n">'+p+'</div>'+
+       '<span class="badge">'+c.tag+'</span></div>'+
+       '<div class="d">'+esc(c.desc)+'</div></div>';
+  });
+  if(!first) h+='<div class="btn-row" style="margin-top:8px">'+
+    '<button class="btn ghost" id="p_cancel">取消</button></div>';
+  $('sheet').innerHTML=h;
+  $('ov').classList.add('on');
+  $('sheet').scrollTop=0;
+  if($('p_cancel')) $('p_cancel').onclick=closeSheet;
+  $('sheet').onclick=function(e){
+    var el=e.target.closest('[data-pp]');
+    if(!el)return;
+    setPace(el.getAttribute('data-pp'));
+    closeSheet();
+  };
+}
+function setPace(p){
+  if(!PACE[p])return;
+  S.kbPace=p;
+  Store.set('pace',p);
+  S.kbDays=null;              // 换了节奏，天数重新按建议来
+  if(S.view==='kb')renderKb();
+  toast('已切到「'+p+'」，行程重排了');
+}
+
 /* ---------- 主渲染 ---------- */
 function renderKb(){
   var from=S.kbFrom,to=S.kbTo;
@@ -1384,6 +1585,13 @@ function renderKb(){
   if(tabs.indexOf(S.kbTab)<0) S.kbTab=tabs[0];
 
   var h=heroOf(to,local);
+  h+='<div class="pace-row" id="paceRow" style="margin-top:12px">'+
+     PACES.map(function(p){
+       var on=(p===S.kbPace);
+       return '<div class="pace-b'+(on?' on':'')+'" data-pace="'+p+'">'+
+              '<div class="n">'+p+'</div>'+
+              '<div class="t">'+PACE[p].tag+'</div></div>';
+     }).join('')+'</div>';
   h+='<div class="chips" id="kbTabs" style="margin:12px 0 4px">'+
      tabs.map(function(t){
        return '<div class="chip'+(t===S.kbTab?' on':'')+'" data-t="'+t+'">'+
@@ -1834,23 +2042,37 @@ function init(){
   if(DATA.froms.indexOf(S.kbFrom)<0) S.kbFrom=DATA.froms[0]||'';
 
   function toOptions(from){
-    var seen={},list=[];
+    // 和目的地列表同一套逻辑：列全部目的地，不是只列 routes 里录过的城市对。
+    // routes 只有 125 对，而 14 个出发地 × 72 个目的地 = 1008 对。
+    var best={},list=[];
     (DATA.routes||[]).forEach(function(r){
-      if(r.from_city!==from||seen[r.to_city])return;
-      seen[r.to_city]=1;
-      list.push({v:r.to_city,t:r.to_city,min:tripMin(r)});
+      if(r.from_city!==from)return;
+      var m=tripMin(r);
+      if(best[r.to_city]==null||m<best[r.to_city]) best[r.to_city]=m;
     });
-    // 同一目的地取最快那条来排序
-    list.forEach(function(o){
-      (DATA.routes||[]).forEach(function(r){
-        if(r.from_city===from&&r.to_city===o.v&&tripMin(r)<o.min) o.min=tripMin(r);
-      });
+    var seen={};
+    (DATA.dests||[]).forEach(function(d){
+      if(d.name===from||d.city===from)return;
+      var m=best[d.name]!=null?best[d.name]:best[d.city];
+      var e=(m==null)?estimateTrip(from,d.name):null;
+      seen[d.name]=1;
+      list.push({v:d.name,t:d.name,min:m!=null?m:(e?e.dur:999999),
+                 est:(m==null)});
+    });
+    Object.keys(best).forEach(function(to){
+      if(seen[to]||to===from)return;
+      list.push({v:to,t:to,min:best[to],est:false});
     });
     list.sort(function(a,b){return a.min-b.min;});
-    var out=[{v:'',t:'先看能去哪（'+list.length+' 个）'}];
+    var nReal=list.filter(function(o){return !o.est;}).length;
+    var out=[{v:'',t:'先看能去哪（'+list.length+' 个 · '+nReal+' 个有实录交通）'}];
     if(poisOf(from).length||foodsOf(from).length)
       out.push({v:from,t:from+' 本地游（不用交通）'});
-    list.forEach(function(o){out.push({v:o.v,t:o.t+'　'+mins(o.min)});});
+    list.forEach(function(o){
+      out.push({v:o.v,
+                t:o.t+'　'+(o.min>=999999?'—':
+                  (o.est?'~'+mins(o.min)+' 估':mins(o.min)))});
+    });
     return out;
   }
   function paintPickers(){
@@ -1888,6 +2110,8 @@ function init(){
       var v=pk.getAttribute('data-pick').split(':');
       togglePick(S.kbTo,v[0],v[1]);renderKb();return;
     }
+    var pc=e.target.closest('[data-pace]');
+    if(pc){setPace(pc.getAttribute('data-pace'));return;}
     var dy=e.target.closest('[data-day]');
     if(dy){S.kbDays=parseInt(dy.getAttribute('data-day'),10);renderKb();return;}
     if(e.target.id==='pickClear'){
@@ -1945,6 +2169,12 @@ function init(){
   }
 
   if(S.view!=='cd') switchView(S.view); else rerender();
+
+  // 没选过强度就先问一次；问完自动跳到攻略页
+  if(!S.kbPace){
+    S.kbPace='正常人';        // 先给个默认，避免弹窗期间算不出行程
+    setTimeout(function(){ openPace(true); }, 320);
+  }
 
   if(!DEMO && 'serviceWorker' in navigator){
     navigator.serviceWorker.register('./sw.js').catch(function(){});
